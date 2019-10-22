@@ -1,7 +1,15 @@
+const BigNumber = require("bignumber.js");
+
 class Signature {
   constructor(r, s) {
-    this.r = r;
-    this.s = s;
+    /**
+     * @type BigNumber
+     */
+    this.r = BigNumber(r);
+    /**
+     * @type BigNumber
+     */
+    this.s = BigNumber(s);
   }
 
   toString() {

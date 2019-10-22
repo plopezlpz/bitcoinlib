@@ -1,4 +1,5 @@
 const BigNumber = require("bignumber.js");
+const Signature = require("./Signature");
 const Point = require("./Point");
 const S256Field = require("./S256Field");
 
@@ -30,6 +31,19 @@ class S256Point extends Point {
   stimes(coefficient) {
     const coef = BigNumber(coefficient).mod(N);
     return super.stimes(coef);
+  }
+
+  /**
+   * @param {number|string|BigNumber} z
+   * @param {Signature} sig
+   */
+  // prettier-ignore
+  validate(z, sig) {
+    const sInv = sig.s.pow(N.minus(2), N);
+    const u = BigNumber(z).times(sInv).mod(N);
+    const v = sig.r.times(sInv).mod(N);
+    const total = G.stimes(u).plus(this.stimes(v));
+    return total.x.num.eq(sig.r);
   }
 }
 
