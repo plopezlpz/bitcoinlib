@@ -1,4 +1,5 @@
 const BigNumber = require("bignumber.js");
+// eslint-disable-next-line no-unused-vars
 const Signature = require("./Signature");
 const Point = require("./Point");
 const S256Field = require("./S256Field");
@@ -42,6 +43,7 @@ class S256Point extends Point {
     const sInv = sig.s.pow(N.minus(2), N);
     const u = BigNumber(z).times(sInv).mod(N);
     const v = sig.r.times(sInv).mod(N);
+    // eslint-disable-next-line no-use-before-define
     const total = G.stimes(u).plus(this.stimes(v));
     return total.x.num.eq(sig.r);
   }
