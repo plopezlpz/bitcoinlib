@@ -93,17 +93,25 @@ class Point {
 
   smul(coefficient) {
     // TODO use binary expansion to increase performance!
-    let product = new Point(Infinity, Infinity, this.a, this.b);
+    let coef = BigNumber(coefficient).toString(2); // binary representation
+    let current = this;
+    let result = new Point(Infinity, Infinity, this.a, this.b);
 
-    let i = BigNumber(0);
-    for (; i.lt(coefficient); i = i.plus(1)) {
-      product = product.add(this);
+    while (coef) {
+      if (coef.endsWith("1")) {
+        result = result.add(current);
+      }
+      current = current.add(current);
+      coef = coef.slice(0, -1);
     }
-    return product;
+    return result;
   }
 
+  // prettier-ignore
   toString() {
-    // prettier-ignore
+    if (this.x === Infinity) {
+      return `Point(Infinity)_${this.a.num.toString(10)}_${this.b.num.toString(10)}`
+    } 
     return `Point(${this.x.num.toString(10)}, ${this.y.num.toString(10)})_${this.a.num.toString(10)}_${this.b.num.toString(10)}`;
   }
 }
