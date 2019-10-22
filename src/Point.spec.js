@@ -82,7 +82,7 @@ describe("Point", () => {
         [2, 47, 71, 36, 111],
         [4, 47, 71, 194, 51],
         [8, 47, 71, 116, 55],
-        [21, 47, 71, Infinity, Infinity] // <- TODO fix this
+        [21, 47, 71, Infinity, Infinity]
       ];
 
       multiplications.forEach(points => {
@@ -128,6 +128,7 @@ describe("Point", () => {
     // prettier-ignore
     it("multiply by 2", () => {
       const result = G.smul(2);
+      expect(result instanceof Point).to.be.true;
       expect(result.x.num.toString(10)).to.be.equal("89565891926547004231252920425935692360644145829622209833684329913297188986597");
       expect(result.y.num.toString(10)).to.be.equal("12158399299693830322967808612713398636155367887041628176798871954788371653930");
     });
