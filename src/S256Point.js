@@ -38,7 +38,7 @@ class S256Point extends Point {
    * @param {Signature} sig
    */
   // prettier-ignore
-  validate(z, sig) {
+  verify(z, sig) {
     const sInv = sig.s.pow(N.minus(2), N);
     const u = BigNumber(z).times(sInv).mod(N);
     const v = sig.r.times(sInv).mod(N);
