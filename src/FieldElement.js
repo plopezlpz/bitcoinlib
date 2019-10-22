@@ -46,7 +46,7 @@ class FieldElement {
   }
 
   pow(exponent) {
-    const n = BigNumber(exponent).mod(this.prime - 1);
+    const n = BigNumber(exponent).mod(this.prime.minus(1));
     const num = this.num.pow(n, this.prime);
     return new FieldElement(num, this.prime);
   }
@@ -54,8 +54,15 @@ class FieldElement {
   div(other) {
     validate(this, other);
     // 1/other
-    const oneOverOther = other.pow(this.prime - 2);
-    return this.mul(oneOverOther);
+    // const oneOverOther = other.pow(this.prime - 2);
+    // return this.mul(oneOverOther);
+    const oneOverOther = other.num.pow(this.prime.minus(2), this.prime);
+    const num = this.num.times(oneOverOther).mod(this.prime);
+    return new FieldElement(num, this.prime);
+  }
+
+  toString() {
+    return `FieldElement_${this.prime.toString(10)}(${this.num.toString(10)})`;
   }
 }
 

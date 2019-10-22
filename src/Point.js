@@ -82,7 +82,8 @@ class Point {
       const num3 = new FieldElement(3, this.x.prime);
       const num2 = new FieldElement(2, this.x.prime);
 
-      const s = num3.mul(this.x.pow(2).add(this.a)).div(num2.mul(this.y));
+      const s = (num3.mul(this.x.pow(2)).add(this.a))
+                .div(num2.mul(this.y));
       const x = s.pow(2).sub(num2.mul(this.x));
       const y = s.mul(this.x.sub(x)).sub(this.y);
       return new Point(x, y, this.a, this.b);
@@ -94,10 +95,16 @@ class Point {
     // TODO use binary expansion to increase performance!
     let product = new Point(Infinity, Infinity, this.a, this.b);
 
-    for (let i = BigNumber(0); i.lt(coefficient); i = i.plus(1)) {
+    let i = BigNumber(0);
+    for (; i.lt(coefficient); i = i.plus(1)) {
       product = product.add(this);
     }
     return product;
+  }
+
+  toString() {
+    // prettier-ignore
+    return `Point(${this.x.num.toString(10)}, ${this.y.num.toString(10)})_${this.a.num.toString(10)}_${this.b.num.toString(10)}`;
   }
 }
 

@@ -102,37 +102,41 @@ describe("Point", () => {
         expect(p1.smul(s).equals(p2)).to.be.true;
       });
     });
+  });
 
+  describe("secp256k1", () => {
     // prettier-ignore
-    it("secp256k1, G (generator point) is in the curve", () => {
-      const gx = BigNumber("0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798");
-      const gy = BigNumber("0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8");
-      const p = BigNumber(2).pow(256).minus(BigNumber(2).pow(32)).minus(977);
-      
-      const x = new FieldElement(gx, p);
-      const y = new FieldElement(gy, p);
-      const zero = new FieldElement(0, p);
-      const seven = new FieldElement(7, p);
+    const gx = BigNumber("0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798");
+    // prettier-ignore
+    const gy = BigNumber("0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8");
+    // prettier-ignore
+    const p = BigNumber(2).pow(256).minus(BigNumber(2).pow(32)).minus(977);
+    // prettier-ignore
+    const n = BigNumber("0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141");
 
+    const x = new FieldElement(gx, p);
+    const y = new FieldElement(gy, p);
+    const zero = new FieldElement(0, p);
+    const seven = new FieldElement(7, p);
+
+    const G = new Point(x, y, zero, seven);
+
+    it("G (generator point) is in the curve", () => {
       expect(() => new Point(x, y, zero, seven)).not.to.throw();
     });
 
     // prettier-ignore
-    it.only("secp256k1, G (generator point) has order n", () => {
-      const gx = BigNumber("0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798");
-      const gy = BigNumber("0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8");
-      const p = BigNumber(2).pow(256).minus(BigNumber(2).pow(32)).minus(977);
-      const n = BigNumber("0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141");
+    it("multiply by 2", () => {
+      const result = G.smul(2);
+      expect(result.x.num.toString(10)).to.be.equal("89565891926547004231252920425935692360644145829622209833684329913297188986597");
+      expect(result.y.num.toString(10)).to.be.equal("12158399299693830322967808612713398636155367887041628176798871954788371653930");
+    })
 
-      const x = new FieldElement(gx, p);
-      const y = new FieldElement(gy, p);
-      const zero = new FieldElement(0, p);
-      const seven = new FieldElement(7, p);
-
-      const G = new Point(x, y, zero, seven);
-      // TODO fix this
-      const result = G.smul(n);
-      console.log(result.x);
-    });
+    // prettier-ignore
+    it.only("multiply by 20", () => {
+      const result = G.smul(10);
+      expect(result.x.num.toString(10)).to.be.equal("72488970228380509287422715226575535698893157273063074627791787432852706183111");
+      expect(result.y.num.toString(10)).to.be.equal("62070622898698443831883535403436258712770888294397026493185421712108624767191");
+    })
   });
 });
