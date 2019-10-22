@@ -17,7 +17,7 @@ class Point {
     }
     // this.y**2 != this.x**3 + a * x + b:
     // prettier-ignore
-    if (!y.pow(2).equals(x.pow(3).add(a.mul(x)).add(b))) {
+    if (!y.pow(2).equals(x.pow(3).plus(a.times(x)).plus(b))) {
       throw Error(`(${x.num}, ${y.num}) is not in the curve`);
     }
   }
@@ -31,7 +31,7 @@ class Point {
     );
   }
 
-  add(other) {
+  plus(other) {
     if (!this.a.equals(other.a) || !this.b.equals(other.b)) {
       throw Error(`Points ${this}, ${other} are not on the same curve`);
     }
@@ -56,9 +56,9 @@ class Point {
     // y3=s*(x1-x3)-y1
     // prettier-ignore
     if (!this.x.equals(other.x)) {
-      const s = (other.y.sub(this.y)).div(other.x.sub(this.x));
-      const x = s.pow(2).sub(this.x).sub(other.x);
-      const y = s.mul(this.x.sub(x)).sub(this.y);
+      const s = (other.y.minus(this.y)).div(other.x.minus(this.x));
+      const x = s.pow(2).minus(this.x).minus(other.x);
+      const y = s.times(this.x.minus(x)).minus(this.y);
       return new Point(x, y, this.a, this.b);
     }
 
@@ -68,7 +68,7 @@ class Point {
     // we just use 0 * self.x
     const num0 = new FieldElement(0, this.x.prime);
     // prettier-ignore
-    if (this.equals(other) && this.y.equals(num0.mul(this.x))) {
+    if (this.equals(other) && this.y.equals(num0.times(this.x))) {
       return new Point(Infinity, Infinity, this.a, this.b);
     }
 
@@ -82,16 +82,19 @@ class Point {
       const num3 = new FieldElement(3, this.x.prime);
       const num2 = new FieldElement(2, this.x.prime);
 
-      const s = (num3.mul(this.x.pow(2)).add(this.a))
-                .div(num2.mul(this.y));
-      const x = s.pow(2).sub(num2.mul(this.x));
-      const y = s.mul(this.x.sub(x)).sub(this.y);
+      const s = (num3.times(this.x.pow(2)).plus(this.a))
+                .div(num2.times(this.y));
+      const x = s.pow(2).minus(num2.times(this.x));
+      const y = s.times(this.x.minus(x)).minus(this.y);
       return new Point(x, y, this.a, this.b);
     }
     throw Error(`could not add ${this} + ${other}`);
   }
 
-  smul(coefficient) {
+  /**
+   * Scalar multiplication
+   */
+  stimes(coefficient) {
     // TODO still not good performance 2.5 seconds when multiplying by n
     let coef = BigNumber(coefficient).toString(2); // binary representation
     let current = this;
@@ -99,9 +102,9 @@ class Point {
 
     while (coef) {
       if (coef.endsWith("1")) {
-        result = result.add(current);
+        result = result.plus(current);
       }
-      current = current.add(current);
+      current = current.plus(current);
       coef = coef.slice(0, -1);
     }
     return result;

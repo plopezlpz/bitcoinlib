@@ -27,9 +27,9 @@ class S256Point extends Point {
     super(toS256Field(x), toS256Field(y), A, B);
   }
 
-  smul(coefficient) {
+  stimes(coefficient) {
     const coef = BigNumber(coefficient).mod(N);
-    return super.smul(coef);
+    return super.stimes(coef);
   }
 }
 

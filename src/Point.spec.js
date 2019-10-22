@@ -59,11 +59,11 @@ describe("Point", () => {
         const y3 = new FieldElement(points[5], prime);
         const p3 = new Point(x3, y3, a, b);
         // check that p1 + p2 == p3
-        expect(p1.add(p2).equals(p3)).to.be.true;
+        expect(p1.plus(p2).equals(p3)).to.be.true;
       });
     });
 
-    it("smul", () => {
+    it("stimes", () => {
       // # tests the following scalar multiplications
       // # 2*(192,105)
       // # 2*(143,98)
@@ -99,7 +99,7 @@ describe("Point", () => {
           const y2 = new FieldElement(points[4], prime);
           p2 = new Point(x2, y2, a, b);
         }
-        expect(p1.smul(s).equals(p2)).to.be.true;
+        expect(p1.stimes(s).equals(p2)).to.be.true;
       });
     });
   });
@@ -127,7 +127,7 @@ describe("Point", () => {
 
     // prettier-ignore
     it("multiply by 2", () => {
-      const result = G.smul(2);
+      const result = G.stimes(2);
       expect(result instanceof Point).to.be.true;
       expect(result.x.num.toString(10)).to.be.equal("89565891926547004231252920425935692360644145829622209833684329913297188986597");
       expect(result.y.num.toString(10)).to.be.equal("12158399299693830322967808612713398636155367887041628176798871954788371653930");
@@ -135,14 +135,14 @@ describe("Point", () => {
 
     // prettier-ignore
     it("multiply by 10", () => {
-      const result = G.smul(10);
+      const result = G.stimes(10);
       expect(result.x.num.toString(10)).to.be.equal("72488970228380509287422715226575535698893157273063074627791787432852706183111");
       expect(result.y.num.toString(10)).to.be.equal("62070622898698443831883535403436258712770888294397026493185421712108624767191");
     });
 
     // prettier-ignore
     it("multiply by n should render Infinite", () => {
-      const result = G.smul(n);
+      const result = G.stimes(n);
 
       expect(result.x).to.be.equal(Infinity);
       expect(result.y).to.be.equal(Infinity);

@@ -27,19 +27,19 @@ class FieldElement {
     return this.num.eq(other.num) && this.prime.eq(other.prime);
   }
 
-  add(other) {
+  plus(other) {
     validate(this, other);
     const num = this.num.plus(other.num).mod(this.prime);
     return new FieldElement(num, this.prime);
   }
 
-  sub(other) {
+  minus(other) {
     validate(this, other);
     const num = this.num.minus(other.num).mod(this.prime);
     return new FieldElement(num, this.prime);
   }
 
-  mul(other) {
+  times(other) {
     validate(this, other);
     const num = this.num.times(other.num).mod(this.prime);
     return new FieldElement(num, this.prime);
@@ -54,10 +54,8 @@ class FieldElement {
   div(other) {
     validate(this, other);
     // 1/other
-    // const oneOverOther = other.pow(this.prime - 2);
-    // return this.mul(oneOverOther);
-    const oneOverOther = other.num.pow(this.prime.minus(2), this.prime);
-    const num = this.num.times(oneOverOther).mod(this.prime);
+    const otherInv = other.num.pow(this.prime.minus(2), this.prime);
+    const num = this.num.times(otherInv).mod(this.prime);
     return new FieldElement(num, this.prime);
   }
 

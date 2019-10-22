@@ -21,32 +21,32 @@ describe("FieldElement", () => {
     });
   });
 
-  describe("add", () => {
+  describe("plus", () => {
     it("should throw exception when the prime is not the same", () => {
       const a = new FieldElement(1, prime);
       const b = new FieldElement(1, 15);
 
-      expect(() => a.add(b)).to.throw(
+      expect(() => a.plus(b)).to.throw(
         /operation not valid for numbers of different fields/
       );
     });
 
-    it("should add when the prime is the same", () => {
+    it("should plus when the prime is the same", () => {
       const a = new FieldElement(1, prime);
       const b = new FieldElement(12, prime);
-      const sum = a.add(b);
+      const sum = a.plus(b);
 
       expect(sum.num).to.be.bignumber.equal(0);
       expect(sum.prime).to.be.bignumber.equal(prime);
     });
   });
 
-  describe("sub", () => {
+  describe("minus", () => {
     it("should throw exception when the prime is not the same", () => {
       const a = new FieldElement(1, prime);
       const b = new FieldElement(1, 15);
 
-      expect(() => a.sub(b)).to.throw(
+      expect(() => a.minus(b)).to.throw(
         /operation not valid for numbers of different fields/
       );
     });
@@ -54,7 +54,7 @@ describe("FieldElement", () => {
     it("should substract when the prime is the same", () => {
       const a = new FieldElement(0, prime);
       const b = new FieldElement(1, prime);
-      const sum = a.sub(b);
+      const sum = a.minus(b);
 
       expect(sum.num).to.be.bignumber.equal(12);
       expect(sum.prime).to.be.bignumber.equal(prime);
@@ -82,12 +82,12 @@ describe("FieldElement", () => {
     });
   });
 
-  describe("mul", () => {
+  describe("times", () => {
     it("should multiply", () => {
       const a = new FieldElement(24, 31);
       const b = new FieldElement(19, 31);
 
-      const result = a.mul(b);
+      const result = a.times(b);
       expect(result.num).to.be.bignumber.equal(22);
       expect(result.prime).to.be.bignumber.equal(31);
     });
