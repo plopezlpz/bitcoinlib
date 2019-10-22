@@ -25,18 +25,29 @@ function toS256Field(num) {
 }
 
 class S256Point extends Point {
+  /**
+   * Point in the sec256k1 curve
+   * @param {string|number|BigNumber.BigNumber} x The x element
+   * @param {string|number|BigNumber.BigNumber} y The y element
+   */
   constructor(x, y) {
     super(toS256Field(x), toS256Field(y), A, B);
   }
 
+  /**
+   * Scalar multiplication
+   * @param {string|number|BigNumber.BigNumber} coefficient The scalar to multiply this point to
+   * @returns {S256Point} A point in the curve
+   */
   stimes(coefficient) {
     const coef = BigNumber(coefficient).mod(N);
     return super.stimes(coef);
   }
 
   /**
-   * @param {number|string|BigNumber} z
+   * @param {string|number|BigNumber.BigNumber} z
    * @param {Signature} sig
+   * @returns {boolean} true if valid, false otherwise
    */
   // prettier-ignore
   verify(z, sig) {

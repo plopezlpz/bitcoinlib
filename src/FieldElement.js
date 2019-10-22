@@ -14,6 +14,10 @@ function validate(self, other) {
  * Finite field element math
  */
 class FieldElement {
+  /**
+   * @param {number|string|BigNumber.BigNumber} num The number in the field
+   * @param {number|string|BigNumber.BigNumber} prime The prime of the field
+   */
   constructor(num, prime) {
     this.num = BigNumber(num);
     this.prime = BigNumber(prime);
@@ -23,34 +27,58 @@ class FieldElement {
     }
   }
 
+  /**
+   * @param {FieldElement} other
+   * @returns {boolean}
+   */
   equals(other) {
     return this.num.eq(other.num) && this.prime.eq(other.prime);
   }
 
+  /**
+   * @param {FieldElement} other
+   * @returns {FieldElement} a new element with the result
+   */
   plus(other) {
     validate(this, other);
     const num = this.num.plus(other.num).mod(this.prime);
     return new FieldElement(num, this.prime);
   }
 
+  /**
+   * @param {FieldElement} other
+   * @returns {FieldElement} a new element with the result
+   */
   minus(other) {
     validate(this, other);
     const num = this.num.minus(other.num).mod(this.prime);
     return new FieldElement(num, this.prime);
   }
 
+  /**
+   * @param {FieldElement} other
+   * @returns {FieldElement} a new element with the result
+   */
   times(other) {
     validate(this, other);
     const num = this.num.times(other.num).mod(this.prime);
     return new FieldElement(num, this.prime);
   }
 
+  /**
+   * @param {string|number|BigNumber.BigNumber} exponent
+   * @returns {FieldElement} a new element with the result
+   */
   pow(exponent) {
     const n = BigNumber(exponent).mod(this.prime.minus(1));
     const num = this.num.pow(n, this.prime);
     return new FieldElement(num, this.prime);
   }
 
+  /**
+   * @param {FieldElement} other
+   * @returns {FieldElement} a new element with the result
+   */
   div(other) {
     validate(this, other);
     // 1/other

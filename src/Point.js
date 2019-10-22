@@ -6,6 +6,13 @@ const FieldElement = require("./FieldElement");
  * Point in curve: `y^2 != x^3 + a * x + b`
  */
 class Point {
+  /**
+   * Point in curve: `y^2 != x^3 + a * x + b` for finite fields
+   * @param {FieldElement|Infinity} x The x element (could be `Infinity`)
+   * @param {FieldElement|Infinity} y The y element (could be `Infinity`)
+   * @param {FieldElement} a The a element
+   * @param {FieldElement} b The b element
+   */
   constructor(x, y, a, b) {
     this.x = x;
     this.y = y;
@@ -22,6 +29,10 @@ class Point {
     }
   }
 
+  /**
+   * @param {Point} other
+   * @returns {boolean}
+   */
   equals(other) {
     return (
       (this.x === other.x || this.x.equals(other.x)) &&
@@ -31,6 +42,10 @@ class Point {
     );
   }
 
+  /**
+   * @param {Point} other
+   * @returns {Point} the resulting point
+   */
   plus(other) {
     if (!this.a.equals(other.a) || !this.b.equals(other.b)) {
       throw Error(`Points ${this}, ${other} are not on the same curve`);
@@ -93,6 +108,7 @@ class Point {
 
   /**
    * Scalar multiplication
+   * @param {string|number|BigNumber.BigNumber} coefficient The scalar to multiply for
    */
   stimes(coefficient) {
     // TODO still not good performance 2.5 seconds when multiplying by n
