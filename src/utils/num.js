@@ -1,6 +1,13 @@
 const BN = require("bn.js");
 
+/**
+ * The order of the group
+ */
+// prettier-ignore
+const N = toBN("0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141");
+
 const k256 = BN.red("k256");
+const orderN = BN.red(N);
 
 /**
  * @param {string|number|BN} num
@@ -45,7 +52,23 @@ function toK256(num) {
   return result;
 }
 
+/**
+ * Returns a big number in the N order
+ * @param {string|number|BN} num
+ */
+function toOrderN(num) {
+  if (num === Infinity) {
+    return Infinity;
+  }
+  let result = toBN(num);
+  if (!result.red) {
+    result = result.toRed(orderN);
+  }
+  return result;
+}
+
 module.exports = {
   toBN,
-  toK256
+  toK256,
+  toOrderN
 };

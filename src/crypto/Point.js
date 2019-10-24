@@ -1,5 +1,5 @@
 const BN = require("bn.js");
-const { toK256, toBN } = require("../utils/num");
+const { toK256, toBN, toOrderN } = require("../utils/num");
 // eslint-disable-next-line no-unused-vars
 const Signature = require("../Signature");
 
@@ -142,12 +142,10 @@ class Point {
   // prettier-ignore
   verify(z, sig) {
     // TODO improve more the performance
-    const ctx = BN.red(N);
+    const sInv = toOrderN(sig.s).redInvm();
 
-    const sInv = sig.s.toRed(ctx).redInvm();
-
-    const u = toBN(z).toRed(ctx).redMul(sInv).fromRed();
-    const v = sig.r.toRed(ctx).redMul(sInv).fromRed();
+    const u = toOrderN(z).redMul(sInv).fromRed();
+    const v = toOrderN(sig.r).redMul(sInv).fromRed();
 
     // eslint-disable-next-line no-use-before-define
     const total = G.sMul(u).add(this.sMul(v));
@@ -168,4 +166,4 @@ const G = new Point(
   "0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8"
 );
 
-module.exports = Point;
+module.exports = { Point, G, N };

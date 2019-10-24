@@ -1,7 +1,7 @@
 const chai = require("chai");
 const BN = require("bn.js");
 const bnChai = require("bn-chai");
-const Point = require("./Point");
+const { Point } = require("./Point");
 const Signature = require("../Signature");
 
 const { expect } = chai;
