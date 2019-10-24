@@ -1,5 +1,5 @@
 const BN = require("bn.js");
-const toBN = require("./utils/num");
+const { toBN } = require("./utils/num");
 // eslint-disable-next-line no-unused-vars
 const Signature = require("./Signature");
 const Point = require("./Point");

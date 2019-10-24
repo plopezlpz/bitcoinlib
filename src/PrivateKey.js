@@ -1,7 +1,7 @@
 const BN = require("bn.js");
 const { G, N } = require("./S256Point");
 const Signature = require("./Signature");
-const toBN = require("./utils/num");
+const { toBN } = require("./utils/num");
 // TODO for react-native:
 // npm install buffer --save
 // import { Buffer } from 'buffer';
