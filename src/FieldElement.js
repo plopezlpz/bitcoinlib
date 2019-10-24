@@ -15,19 +15,18 @@ class FieldElement {
   /**
    * @param {number|string|BN} num The number in the field
    * @param {number|string|BN} prime The prime of the field
-   * @param {string} [rc] Reduction context
    */
-  constructor(num, prime, rc) {
+  constructor(num, prime) {
     /** @type {BN} */
     this.num = toBN(num);
     /** @type {BN} */
     this.prime = toBN(prime);
 
-    if (this.num.gte(this.prime) || this.num.lt(0)) {
+    if (this.num.gte(this.prime) || this.num.lt(new BN(0))) {
       throw Error(`Num ${num} not in field range 0 to ${prime - 1}`);
     }
 
-    this.red = BN.red(rc || this.prime); // TODO use "k256"
+    this.red = BN.red(this.prime);
     this.redNum = this.num.toRed(this.red);
   }
 

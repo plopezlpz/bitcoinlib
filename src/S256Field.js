@@ -12,7 +12,7 @@ class S256Field extends FieldElement {
    * @param {number|string|BN} num The number in the field
    */
   constructor(num) {
-    super(num, P, "k256");
+    super(num, P);
   }
 
   toString() {
