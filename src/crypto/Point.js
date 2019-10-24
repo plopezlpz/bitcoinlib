@@ -1,4 +1,13 @@
+const BN = require("bn.js");
 const { toK256, toBN } = require("../utils/num");
+// eslint-disable-next-line no-unused-vars
+const Signature = require("../Signature");
+
+/**
+ * The order of the group
+ */
+// prettier-ignore
+const N = toBN("0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141");
 
 const A = toK256(0);
 const B = toK256(7);
@@ -125,13 +134,38 @@ class Point {
     return result;
   }
 
+  /**
+   * @param {string|number|BN} z
+   * @param {Signature} sig
+   * @returns {boolean} true if valid, false otherwise
+   */
+  // prettier-ignore
+  verify(z, sig) {
+    // TODO improve more the performance
+    const ctx = BN.red(N);
+
+    const sInv = sig.s.toRed(ctx).redInvm();
+
+    const u = toBN(z).toRed(ctx).redMul(sInv).fromRed();
+    const v = sig.r.toRed(ctx).redMul(sInv).fromRed();
+
+    // eslint-disable-next-line no-use-before-define
+    const total = G.sMul(u).add(this.sMul(v));
+    return total.x.eq(sig.r);
+  }
+
   // prettier-ignore
   toString() {
     if (this.x === Infinity) {
-      return `Point(Infinity)_${A.toString(10)}_${B.toString(10)}`
+      return `Point(Infinity)_${A.toString()}_${B.toString()}`
     } 
-    return `Point(${this.x.toString(10)}, ${this.y.toString(10)})_${A.toString(10)}_${B.toString(10)}`;
+    return `Point(${this.x.toString()}, ${this.y.toString()})_${A.toString()}_${B.toString()}`;
   }
 }
+
+const G = new Point(
+  "0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+  "0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8"
+);
 
 module.exports = Point;

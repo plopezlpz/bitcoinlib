@@ -13,7 +13,7 @@ class Signature {
   }
 
   toString() {
-    return `Signature(${this.r}, ${this.s})`;
+    return `Signature(${this.r.toString()}, ${this.s.toString()})`;
   }
 }
 
