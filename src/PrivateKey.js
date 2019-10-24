@@ -1,7 +1,7 @@
-/** @type {BigNumber.BigNumber} */
-const BigNumber = require("bignumber.js");
+const BN = require("bn.js");
 const { G, N } = require("./S256Point");
 const Signature = require("./Signature");
+const toBN = require("./utils/num");
 // TODO for react-native:
 // npm install buffer --save
 // import { Buffer } from 'buffer';
@@ -9,30 +9,33 @@ const Signature = require("./Signature");
 
 class PrivateKey {
   /**
-   * @param {string|number|BigNumber.BigNumber} secret
+   * @param {string|number|BN} secret
    */
   constructor(secret) {
-    /** @type {BigNumber.BigNumber} */
-    this.secret = BigNumber(secret);
+    this.secret = toBN(secret);
     this.point = G.stimes(secret);
   }
 
   /**
    * Signs z
-   * @param {string|number|BigNumber.BigNumber} z
+   * @param {string|number|BN} z
    * @returns {Signature}
    */
   sign(z) {
+    // eslint-disable-next-line no-param-reassign
+    z = toBN(z);
     // It is imperative not to reuse k
-    /**  @type {BigNumber.BigNumber} */
     const k = this.deterministicK(z);
-    /**  @type {BigNumber.BigNumber} */
+    /** @type {BN} */
     const r = G.stimes(k).x.num;
-    const kInv = k.pow(N.minus(2), N);
+
+    const ctx = BN.red(N);
+
+    const kInv = k.toRed(ctx).redInvm();
     // prettier-ignore
-    let s = (r.times(this.secret).plus(BigNumber(z))).times(kInv).mod(N);
+    let s = (r.mul(this.secret).add(z)).toRed(ctx).redIMul(kInv);
     // using low-s value will get nodes to relay our tx (this is for malleability reasons)
-    if (s.lt(N.div(2))) {
+    if (s.lt(N.div(new BN(2)))) {
       s = N.minus(s);
     }
     return new Signature(r, s);
@@ -41,8 +44,8 @@ class PrivateKey {
   /**
    * Returns a deterministic k in the range (0, N], specification RFC 6979
    * The alternative would be to use a trully random k
-   * @param {BigNumber.BigNumber} z
-   * @returns {BigNumber.BigNumber}
+   * @param {string|number|BN} z
+   * @returns {BN}
    */
   deterministicK(z) {
     const v = Buffer.alloc(32);
@@ -53,7 +56,7 @@ class PrivateKey {
       z = z.minus(N);
     }
 
-    return BigNumber(22); // in range [0, N)
+    return new BN(22); // in range [0, N)
   }
 }
 

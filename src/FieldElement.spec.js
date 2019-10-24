@@ -1,7 +1,10 @@
 const chai = require("chai");
+const BN = require("bn.js");
+const bnChai = require("bn-chai");
+
 const FieldElement = require("./FieldElement");
 
-chai.use(require("chai-bignumber")());
+chai.use(bnChai(BN));
 
 const { expect } = chai;
 
@@ -36,8 +39,8 @@ describe("FieldElement", () => {
       const b = new FieldElement(12, prime);
       const sum = a.plus(b);
 
-      expect(sum.num).to.be.bignumber.equal(0);
-      expect(sum.prime).to.be.bignumber.equal(prime);
+      expect(sum.num).to.eq.BN(0);
+      expect(sum.prime).to.eq.BN(prime);
     });
   });
 
@@ -56,8 +59,8 @@ describe("FieldElement", () => {
       const b = new FieldElement(1, prime);
       const sum = a.minus(b);
 
-      expect(sum.num).to.be.bignumber.equal(12);
-      expect(sum.prime).to.be.bignumber.equal(prime);
+      expect(sum.num).to.eq.BN(12);
+      expect(sum.prime).to.eq.BN(prime);
     });
   });
 
@@ -88,8 +91,8 @@ describe("FieldElement", () => {
       const b = new FieldElement(19, 31);
 
       const result = a.times(b);
-      expect(result.num).to.be.bignumber.equal(22);
-      expect(result.prime).to.be.bignumber.equal(31);
+      expect(result.num).to.eq.BN(22);
+      expect(result.prime).to.eq.BN(31);
     });
   });
 
@@ -98,22 +101,22 @@ describe("FieldElement", () => {
       const a = new FieldElement(17, 31);
 
       const result = a.pow(3);
-      expect(result.num).to.be.bignumber.equal(15);
-      expect(result.prime).to.be.bignumber.equal(31);
+      expect(result.num).to.eq.BN(15);
+      expect(result.prime).to.eq.BN(31);
     });
 
     it("negative exp", () => {
       const a = new FieldElement(7, 13);
 
       const result = a.pow(-3);
-      expect(result.num).to.be.bignumber.equal(8);
-      expect(result.prime).to.be.bignumber.equal(13);
+      expect(result.num).to.eq.BN(8);
+      expect(result.prime).to.eq.BN(13);
     });
 
     it("slightly bigger num", () => {
       const a = new FieldElement(48, 223);
       const result = a.pow(221);
-      expect(result.num).to.bignumber.equal(79);
+      expect(result.num).to.eq.BN(79);
     });
   });
 
@@ -125,7 +128,7 @@ describe("FieldElement", () => {
       const a = new FieldElement(3, 31);
       const b = new FieldElement(24, 31);
       const result = a.div(b);
-      expect(result.num).to.be.bignumber.equal(4);
+      expect(result.num).to.eq.BN(4);
     });
   });
 });

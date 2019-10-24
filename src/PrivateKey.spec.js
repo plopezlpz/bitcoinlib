@@ -1,17 +1,15 @@
-const BigNumber = require("bignumber.js");
+const BN = require("bn.js");
 const { stub } = require("sinon");
 const { expect } = require("chai");
 const sha = require("./utils/sha");
 const PrivateKey = require("./PrivateKey");
 
 describe("PrivateKey", () => {
-  it.only("signs tx (brainwallet style)", () => {
-    /** @type {BigNumber.BigNumber} */
-    const e = BigNumber(`0x${sha("my secret")}`);
-    /** @type {BigNumber.BigNumber} */
-    const z = BigNumber(`0x${sha("my message")}`);
+  it("signs tx (brainwallet style)", () => {
+    const e = new BN(sha("my secret"), "hex");
+    const z = new BN(sha("my message"), "hex");
     const priv = new PrivateKey(e);
-    stub(priv, "deterministicK").callsFake(() => BigNumber(1234567890));
+    stub(priv, "deterministicK").callsFake(() => new BN(1234567890));
 
     const sig = priv.sign(z);
 

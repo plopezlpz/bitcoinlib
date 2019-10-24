@@ -1,5 +1,5 @@
 const { expect } = require("chai");
-const BigNumber = require("bignumber.js");
+const BN = require("bn.js");
 const FieldElement = require("./FieldElement");
 const Point = require("./Point");
 
@@ -106,13 +106,13 @@ describe("Point", () => {
 
   describe("secp256k1", () => {
     // prettier-ignore
-    const gx = BigNumber("0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798");
+    const gx = new BN("79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798", "hex");
     // prettier-ignore
-    const gy = BigNumber("0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8");
+    const gy = new BN("483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8", "hex");
     // prettier-ignore
-    const p = BigNumber(2).pow(256).minus(BigNumber(2).pow(32)).minus(977);
+    const p = new BN(2).pow(new BN(256)).sub(new BN(2).pow(new BN(32))).sub(new BN(977));
     // prettier-ignore
-    const n = BigNumber("0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141");
+    const n = new BN("fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141", "hex");
 
     const x = new FieldElement(gx, p);
     const y = new FieldElement(gy, p);

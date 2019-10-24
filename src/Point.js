@@ -1,4 +1,5 @@
-const BigNumber = require("bignumber.js");
+const BN = require("bn.js");
+const toBN = require("./utils/num");
 const FieldElement = require("./FieldElement");
 
 /**
@@ -108,11 +109,11 @@ class Point {
 
   /**
    * Scalar multiplication
-   * @param {string|number|BigNumber.BigNumber} coefficient The scalar to multiply for
+   * @param {string|number|BN} coefficient The scalar to multiply for
    */
   stimes(coefficient) {
     // TODO still not good performance 2.5 seconds when multiplying by n
-    let coef = BigNumber(coefficient).toString(2); // binary representation
+    let coef = toBN(coefficient).toString(2); // binary representation
     let current = this;
     let result = new Point(Infinity, Infinity, this.a, this.b);
 

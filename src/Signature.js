@@ -1,15 +1,15 @@
-const BigNumber = require("bignumber.js");
+// eslint-disable-next-line no-unused-vars
+const BN = require("bn.js");
+const toBN = require("./utils/num");
 
 class Signature {
   /**
-   * @param {string|number|BigNumber.BigNumber} r
-   * @param {string|number|BigNumber.BigNumber} s
+   * @param {string|number|BN} r
+   * @param {string|number|BN} s
    */
   constructor(r, s) {
-    /** @type {BigNumber.BigNumber} */
-    this.r = BigNumber(r);
-    /** @type {BigNumber.BigNumber} */
-    this.s = BigNumber(s);
+    this.r = toBN(r);
+    this.s = toBN(s);
   }
 
   toString() {

@@ -10,8 +10,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "bn-chai": "^1.0.1",
     "chai": "^4.2.0",
-    "chai-bignumber": "^3.0.0",
     "eslint": "^6.5.1",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.4.0",
@@ -23,7 +23,6 @@
     "sinon": "^7.5.0"
   },
   "dependencies": {
-    "bignumber.js": "^9.0.0",
     "bn.js": "^5.0.0",
     "sha.js": "^2.4.11"
   }

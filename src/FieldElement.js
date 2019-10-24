@@ -1,7 +1,5 @@
-const BigNumber = require("bignumber.js");
-
-// Configure the modulo
-BigNumber.config({ MODULO_MODE: BigNumber.EUCLID });
+const BN = require("bn.js");
+const toBN = require("./utils/num");
 
 // private functions
 function validate(self, other) {
@@ -15,16 +13,22 @@ function validate(self, other) {
  */
 class FieldElement {
   /**
-   * @param {number|string|BigNumber.BigNumber} num The number in the field
-   * @param {number|string|BigNumber.BigNumber} prime The prime of the field
+   * @param {number|string|BN} num The number in the field
+   * @param {number|string|BN} prime The prime of the field
+   * @param {string} [rc] Reduction context
    */
-  constructor(num, prime) {
-    this.num = BigNumber(num);
-    this.prime = BigNumber(prime);
+  constructor(num, prime, rc) {
+    /** @type {BN} */
+    this.num = toBN(num);
+    /** @type {BN} */
+    this.prime = toBN(prime);
 
     if (this.num.gte(this.prime) || this.num.lt(0)) {
       throw Error(`Num ${num} not in field range 0 to ${prime - 1}`);
     }
+
+    this.red = BN.red(rc || this.prime); // TODO use "k256"
+    this.redNum = this.num.toRed(this.red);
   }
 
   /**
@@ -41,7 +45,7 @@ class FieldElement {
    */
   plus(other) {
     validate(this, other);
-    const num = this.num.plus(other.num).mod(this.prime);
+    const num = this.num.add(other.num).umod(this.prime);
     return new FieldElement(num, this.prime);
   }
 
@@ -51,7 +55,7 @@ class FieldElement {
    */
   minus(other) {
     validate(this, other);
-    const num = this.num.minus(other.num).mod(this.prime);
+    const num = this.num.sub(other.num).umod(this.prime);
     return new FieldElement(num, this.prime);
   }
 
@@ -61,18 +65,18 @@ class FieldElement {
    */
   times(other) {
     validate(this, other);
-    const num = this.num.times(other.num).mod(this.prime);
+    const num = this.num.mul(other.num).umod(this.prime);
     return new FieldElement(num, this.prime);
   }
 
   /**
-   * @param {string|number|BigNumber.BigNumber} exponent
+   * @param {string|number|BN} exponent
    * @returns {FieldElement} a new element with the result
    */
   pow(exponent) {
-    const n = BigNumber(exponent).mod(this.prime.minus(1));
-    const num = this.num.pow(n, this.prime);
-    return new FieldElement(num, this.prime);
+    const n = toBN(exponent).umod(this.prime.sub(new BN(1)));
+    const res = this.redNum.redPow(n);
+    return new FieldElement(res.fromRed(), this.prime);
   }
 
   /**
@@ -82,8 +86,8 @@ class FieldElement {
   div(other) {
     validate(this, other);
     // 1/other
-    const otherInv = other.num.pow(this.prime.minus(2), this.prime);
-    const num = this.num.times(otherInv).mod(this.prime);
+    const otherInv = other.pow(this.prime.sub(new BN(2)));
+    const num = this.num.mul(otherInv.num).umod(this.prime);
     return new FieldElement(num, this.prime);
   }
 
