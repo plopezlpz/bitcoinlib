@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 const BN = require("bn.js");
-const { toBN } = require("./utils/num");
+const { toBN } = require("../utils/num");
 
 class Signature {
   /**

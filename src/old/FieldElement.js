@@ -1,5 +1,5 @@
 const BN = require("bn.js");
-const { toBN } = require("./utils/num");
+const { toBN } = require("../utils/num");
 
 // private functions
 function validate(self, other) {

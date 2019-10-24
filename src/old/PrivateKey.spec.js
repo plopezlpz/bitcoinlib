@@ -1,7 +1,7 @@
 const BN = require("bn.js");
 const { stub } = require("sinon");
 const { expect } = require("chai");
-const sha = require("./utils/sha");
+const sha = require("../utils/sha");
 const PrivateKey = require("./PrivateKey");
 
 describe("PrivateKey", () => {

@@ -4,6 +4,7 @@ const BN = require("bn.js");
  * The order of the group
  */
 // prettier-ignore
+// eslint-disable-next-line no-use-before-define
 const N = toBN("0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141");
 
 const k256 = BN.red("k256");

@@ -1,7 +1,6 @@
-const BN = require("bn.js");
 const { toK256, toBN, toOrderN } = require("../utils/num");
 // eslint-disable-next-line no-unused-vars
-const Signature = require("../Signature");
+const Signature = require("./Signature");
 
 /**
  * The order of the group

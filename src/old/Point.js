@@ -1,4 +1,4 @@
-const { toBN } = require("./utils/num");
+const { toBN } = require("../utils/num");
 const FieldElement = require("./FieldElement");
 
 /**

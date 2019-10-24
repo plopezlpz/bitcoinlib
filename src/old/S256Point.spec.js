@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { G, N, S256Point } = require("./S256Point");
-const Signature = require("./Signature");
+const Signature = require("../crypto/Signature");
 
 describe("S256Point", () => {
   it("scalar multiplication", () => {

@@ -1,6 +1,6 @@
 const BN = require("bn.js");
 const { G, N } = require("./Point");
-const Signature = require("../Signature");
+const Signature = require("./Signature");
 const { toBN, toOrderN } = require("../utils/num");
 
 const N2 = new BN(2);
