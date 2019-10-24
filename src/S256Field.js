@@ -8,6 +8,9 @@ const P = BigNumber(2).pow(256).minus(BigNumber(2).pow(32)).minus(977);
  * Public point for the private key
  */
 class S256Field extends FieldElement {
+  /**
+   * @param {number|string|BigNumber.BigNumber} num The number in the field
+   */
   constructor(num) {
     super(num, P);
   }

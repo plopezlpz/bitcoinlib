@@ -7,6 +7,7 @@ const S256Field = require("./S256Field");
 const A = new S256Field(0);
 const B = new S256Field(7);
 // prettier-ignore
+/** @type {BigNumber.BigNumber} */
 const N = BigNumber("0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141");
 
 function toS256Field(num) {
