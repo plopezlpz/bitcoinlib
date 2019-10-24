@@ -38,19 +38,23 @@ function toBN(num) {
   throw Error(`Unrecognized number format for: ${num}`);
 }
 
-/**
- * Returns a big number in the k256 field
- * @param {string|number|BN} num
- */
-function toK256(num) {
+function toReductionContext(num, reductionContext) {
   if (num === Infinity) {
     return Infinity;
   }
   let result = toBN(num);
   if (!result.red) {
-    result = result.toRed(k256);
+    result = result.toRed(reductionContext);
   }
   return result;
+}
+
+/**
+ * Returns a big number in the k256 field
+ * @param {string|number|BN} num
+ */
+function toK256(num) {
+  return toReductionContext(num, k256);
 }
 
 /**
@@ -58,14 +62,7 @@ function toK256(num) {
  * @param {string|number|BN} num
  */
 function toOrderN(num) {
-  if (num === Infinity) {
-    return Infinity;
-  }
-  let result = toBN(num);
-  if (!result.red) {
-    result = result.toRed(orderN);
-  }
-  return result;
+  return toReductionContext(num, orderN);
 }
 
 module.exports = {
