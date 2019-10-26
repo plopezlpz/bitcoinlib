@@ -1,5 +1,6 @@
 const BN = require("bn.js");
 const { sha256 } = require("js-sha256");
+const { Buffer } = require("buffer");
 const { G, N } = require("./Point");
 const Signature = require("./Signature");
 const { toBN, toOrderN } = require("../utils/num");
