@@ -207,11 +207,11 @@ class Point {
   }
 
   // prettier-ignore
-  toString() {
+  toString(radix) {
     if (this.x === Infinity) {
       return `Point(Infinity)_${A.toString()}_${B.toString()}`
     } 
-    return `Point(${this.x.toString()}, ${this.y.toString()})_${A.toString()}_${B.toString()}`;
+    return `Point(${this.x.toString(radix)}, ${this.y.toString(radix)})_${A.toString()}_${B.toString()}`;
   }
 }
 
