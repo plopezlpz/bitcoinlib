@@ -1,3 +1,4 @@
+const { Buffer } = require("buffer");
 const { toK256, toBN, toOrderN } = require("../utils/num");
 // eslint-disable-next-line no-unused-vars
 const Signature = require("./Signature");
@@ -21,6 +22,7 @@ const R3 = toK256(3);
 /**
  * Point in the secp256k1 curve:
  * `y^2 != x^3 + 7`
+ * This is the ECDSA public key
  */
 class Point {
   /**
@@ -149,6 +151,17 @@ class Point {
     // eslint-disable-next-line no-use-before-define
     const total = G.sMul(u).add(this.sMul(v));
     return total.x.eq(sig.r);
+  }
+
+  /**
+   * Returns the buffer version of the sec format
+   */
+  sec() {
+    return Buffer.concat([
+      Buffer.from([0x04]),
+      this.x.toArrayLike(Buffer, "be", 32),
+      this.y.toArrayLike(Buffer, "be", 32)
+    ]);
   }
 
   // prettier-ignore
