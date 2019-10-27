@@ -8,6 +8,8 @@ const Signature = require("./Signature");
  */
 // prettier-ignore
 const N = toBN("0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141");
+// prettier-ignore
+const P = toK256("0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f");
 
 const A = toK256(0);
 const B = toK256(7);
@@ -158,7 +160,6 @@ class Point {
    */
   sec(compressed = true) {
     if (compressed) {
-      // 0x02 if even, 0x03 if odd
       const yEvenMarker = this.y.isEven() ? 0x02 : 0x03;
       return Buffer.concat([
         Buffer.from([yEvenMarker]),
@@ -170,6 +171,39 @@ class Point {
       this.x.toArrayLike(Buffer, "be", 32),
       this.y.toArrayLike(Buffer, "be", 32)
     ]);
+  }
+
+  /**
+   * Returns a Point from a sec buffer
+   * @param {Buffer} sec // maybe a hex string better?
+   */
+  static parse(sec) {
+    if (sec[0] === 0x04) {
+      return new Point(
+        `0x${sec.slice(1, 33).toString("hex")}`,
+        `0x${sec.slice(33, 65).toString("hex")}`
+      );
+    }
+    const isEven = sec[0] === 0x02;
+    // right side of the equation y^2 = x^3 + 7
+    // prettier-ignore
+    const x = toK256(`0x${sec.slice(1).toString("hex")}`)
+    const alpha = x.redPow(N3).add(B);
+    // solve for left side
+    const beta = toK256(alpha).redSqrt();
+    let evenBeta;
+    let oddBeta;
+    if (beta.isEven()) {
+      evenBeta = beta;
+      oddBeta = P.redSub(beta);
+    } else {
+      evenBeta = P.redSub(beta);
+      oddBeta = beta;
+    }
+    if (isEven) {
+      return new Point(x.fromRed(), evenBeta.fromRed());
+    }
+    return new Point(x.fromRed(), oddBeta.fromRed());
   }
 
   // prettier-ignore

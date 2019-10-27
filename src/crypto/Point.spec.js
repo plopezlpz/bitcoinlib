@@ -80,7 +80,7 @@ describe("Point in s256", () => {
     expect(result).to.be.true;
   });
 
-  describe.only("sec", () => {
+  describe("sec", () => {
     it("PrivateKey to PublicKey to SEC format - num", () => {
       const pk = new PrivateKey(5000);
       expect(pk.point.sec(false).toString("hex")).to.equal(
@@ -95,11 +95,54 @@ describe("Point in s256", () => {
       );
     });
 
-    it("PrivateKey to PublicKey to SEC format - compressed", () => {
+    it("PrivateKey to PublicKey to SEC format - compressed even", () => {
       const pk = new PrivateKey(5000);
       expect(pk.point.sec().toString("hex")).to.equal(
         "02ffe558e388852f0120e46af2d1b370f85854a8eb0841811ece0e3e03d282d57c"
       );
+    });
+
+    it("PrivateKey to PublicKey to SEC format - compressed odd", () => {
+      const pk = new PrivateKey("0xdeadbeef12345");
+      expect(pk.point.sec().toString("hex")).to.equal(
+        "03d90cd625ee87dd38656dd95cf79f65f60f7273b67d3096e68bd81e4f5342691f"
+      );
+    });
+
+    it("Parse - uncompressed", () => {
+      const sec = Buffer.from(
+        "04ffe558e388852f0120e46af2d1b370f85854a8eb0841811ece0e3e03d282d57c315dc72890a4f10a1481c031b03b351b0dc79901ca18a00cf009dbdb157a1d10",
+        "hex"
+      );
+      const point = Point.parse(sec);
+      // prettier-ignore
+      expect(point.x.toString(16)).to.equal("ffe558e388852f0120e46af2d1b370f85854a8eb0841811ece0e3e03d282d57c");
+      // prettier-ignore
+      expect(point.y.toString(16)).to.equal("315dc72890a4f10a1481c031b03b351b0dc79901ca18a00cf009dbdb157a1d10");
+    });
+
+    it("Parse - compressed even", () => {
+      const sec = Buffer.from(
+        "02ffe558e388852f0120e46af2d1b370f85854a8eb0841811ece0e3e03d282d57c",
+        "hex"
+      );
+      const point = Point.parse(sec);
+      // prettier-ignore
+      expect(point.x.toString(16)).to.equal("ffe558e388852f0120e46af2d1b370f85854a8eb0841811ece0e3e03d282d57c");
+      // prettier-ignore
+      expect(point.y.toString(16)).to.equal("315dc72890a4f10a1481c031b03b351b0dc79901ca18a00cf009dbdb157a1d10");
+    });
+
+    it("Parse - compressed odd", () => {
+      const sec = Buffer.from(
+        "03d90cd625ee87dd38656dd95cf79f65f60f7273b67d3096e68bd81e4f5342691f",
+        "hex"
+      );
+      const point = Point.parse(sec);
+      // prettier-ignore
+      expect(point.x.toString(16)).to.equal("d90cd625ee87dd38656dd95cf79f65f60f7273b67d3096e68bd81e4f5342691f");
+      // prettier-ignore
+      expect(point.y.toString(16)).to.equal("842efa762fd59961d0e99803c61edba8b3e3f7dc3a341836f97733aebf987121");
     });
   });
 });
