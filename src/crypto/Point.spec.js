@@ -83,15 +83,22 @@ describe("Point in s256", () => {
   describe.only("sec", () => {
     it("PrivateKey to PublicKey to SEC format - num", () => {
       const pk = new PrivateKey(5000);
-      expect(pk.point.sec().toString("hex")).to.equal(
+      expect(pk.point.sec(false).toString("hex")).to.equal(
         "04ffe558e388852f0120e46af2d1b370f85854a8eb0841811ece0e3e03d282d57c315dc72890a4f10a1481c031b03b351b0dc79901ca18a00cf009dbdb157a1d10"
       );
     });
 
     it("PrivateKey to PublicKey to SEC format - hex", () => {
       const pk = new PrivateKey("0xdeadbeef12345");
-      expect(pk.point.sec().toString("hex")).to.equal(
+      expect(pk.point.sec(false).toString("hex")).to.equal(
         "04d90cd625ee87dd38656dd95cf79f65f60f7273b67d3096e68bd81e4f5342691f842efa762fd59961d0e99803c61edba8b3e3f7dc3a341836f97733aebf987121"
+      );
+    });
+
+    it("PrivateKey to PublicKey to SEC format - compressed", () => {
+      const pk = new PrivateKey(5000);
+      expect(pk.point.sec().toString("hex")).to.equal(
+        "02ffe558e388852f0120e46af2d1b370f85854a8eb0841811ece0e3e03d282d57c"
       );
     });
   });

@@ -156,7 +156,15 @@ class Point {
   /**
    * Returns the buffer version of the sec format
    */
-  sec() {
+  sec(compressed = true) {
+    if (compressed) {
+      // 0x02 if even, 0x03 if odd
+      const yEvenMarker = this.y.isEven() ? 0x02 : 0x03;
+      return Buffer.concat([
+        Buffer.from([yEvenMarker]),
+        this.x.toArrayLike(Buffer, "be", 32)
+      ]);
+    }
     return Buffer.concat([
       Buffer.from([0x04]),
       this.x.toArrayLike(Buffer, "be", 32),
