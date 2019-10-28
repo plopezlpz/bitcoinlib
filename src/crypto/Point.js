@@ -1,5 +1,7 @@
 const { Buffer } = require("buffer");
 const { toK256, toBN, toOrderN } = require("../utils/num");
+const { hash160 } = require("../utils/hash");
+const { base58Checksum } = require("../utils/encoding");
 // eslint-disable-next-line no-unused-vars
 const Signature = require("./Signature");
 
@@ -204,6 +206,18 @@ class Point {
       return new Point(x.fromRed(), evenBeta.fromRed());
     }
     return new Point(x.fromRed(), oddBeta.fromRed());
+  }
+
+  hash160(compressed = true) {
+    return hash160(this.sec(compressed));
+  }
+
+  address(compressed = true, testnet = false) {
+    const h160 = this.hash160(compressed);
+    const prefix = testnet ? 0x6f : 0x00;
+    return base58Checksum(
+      Buffer.concat([Buffer.from([prefix]), Buffer.from(h160, "hex")])
+    );
   }
 
   // prettier-ignore

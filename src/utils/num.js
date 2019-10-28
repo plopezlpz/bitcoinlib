@@ -34,6 +34,7 @@ function toBN(num) {
     if (num.startsWith("0b")) {
       return new BN(num.substring(2), 2);
     }
+    return new BN(num);
   }
   throw Error(`Unrecognized number format for: ${num}`);
 }

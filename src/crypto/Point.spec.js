@@ -145,4 +145,24 @@ describe("Point in s256", () => {
       expect(point.y.toString(16)).to.equal("842efa762fd59961d0e99803c61edba8b3e3f7dc3a341836f97733aebf987121");
     });
   });
+
+  describe("address", () => {
+    it("sha160, uncommpressed", () => {
+      const priv = new PrivateKey(5002);
+      const res = priv.point.address(false, true);
+      expect(res).to.equal("mmTPbXQFxboEtNRkwfh6K51jvdtHLxGeMA");
+    });
+
+    it("sha160, commpressed", () => {
+      const priv = new PrivateKey("33632321603200000");
+      const res = priv.point.address(true, true);
+      expect(res).to.equal("mopVkxp8UhXqRYbCYJsbeE1h1fiF64jcoH");
+    });
+
+    it("sha160, commpressed mainnet", () => {
+      const priv = new PrivateKey("0x12345deadbeef");
+      const res = priv.point.address(true, false);
+      expect(res).to.equal("1F1Pn2y6pDb68E5nYJJeba4TLg2U7B6KF1");
+    });
+  });
 });

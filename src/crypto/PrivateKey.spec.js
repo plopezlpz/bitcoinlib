@@ -27,4 +27,25 @@ describe("PrivateKey", () => {
     // prettier-ignore
     expect(priv.deterministicK(z).toString(10)).to.equal("113213234669682963325447032715629850130244745741694426314257695186651662957264");
   });
+
+  it("wif", () => {
+    const priv = new PrivateKey(5003);
+    expect(priv.wif(true, true)).to.equal(
+      "cMahea7zqjxrtgAbB7LSGbcQUr1uX1ojuat9jZodMN8rFTv2sfUK"
+    );
+  });
+
+  it("wif mainnet", () => {
+    const priv = new PrivateKey("0x54321deadbeef");
+    expect(priv.wif(true, false)).to.equal(
+      "KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgiuQJv1h8Ytr2S53a"
+    );
+  });
+
+  it("wif uncommpressed", () => {
+    const priv = new PrivateKey("33715652388894101");
+    expect(priv.wif(false, true)).to.equal(
+      "91avARGdfge8E4tZfYLoxeJ5sGBdNJQH4kvjpWAxgzczjbCwxic"
+    );
+  });
 });

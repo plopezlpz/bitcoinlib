@@ -4,6 +4,7 @@ const { Buffer } = require("buffer");
 const { G, N } = require("./Point");
 const Signature = require("./Signature");
 const { toBN, toOrderN } = require("../utils/num");
+const { base58Checksum } = require("../utils/encoding");
 // TODO for react-native:
 // npm install buffer --save
 // import { Buffer } from 'buffer';
@@ -82,6 +83,17 @@ class PrivateKey {
       k = sha256.hmac.arrayBuffer(k, Buffer.concat([vBuff, Buffer.from([0x01]), secretBuff, zBuff]))
       v = sha256.hmac.arrayBuffer(k, v);
     }
+  }
+
+  wif(compressed = true, testnet = false) {
+    const secretBytes = this.secret.toArrayLike(Buffer, "be", 32);
+    const prefix = testnet ? 0xef : 0x80;
+    if (compressed) {
+      return base58Checksum(
+        Buffer.concat([Buffer.from([prefix]), secretBytes, Buffer.from([0x01])])
+      );
+    }
+    return base58Checksum(Buffer.concat([Buffer.from([prefix]), secretBytes]));
   }
 }
 
