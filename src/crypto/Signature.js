@@ -5,7 +5,7 @@ const { toBN } = require("../utils/num");
 
 function lstrip(buffer, byte) {
   let pos;
-  for (let i = 0; i <= buffer.length; i++) {
+  for (let i = 0; i <= buffer.length; i += 1) {
     if (buffer[i] !== byte) {
       pos = i;
       break;
