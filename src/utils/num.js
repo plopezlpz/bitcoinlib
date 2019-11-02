@@ -9,6 +9,10 @@ const N = toBN("0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd03641
 
 const k256 = BN.red("k256");
 const orderN = BN.red(N);
+const N0 = new BN(0);
+const N1 = new BN(1);
+const N2 = new BN(2);
+const N3 = new BN(3);
 
 /**
  * @param {string|number|BN} num
@@ -69,5 +73,9 @@ function toOrderN(num) {
 module.exports = {
   toBN,
   toK256,
-  toOrderN
+  toOrderN,
+  N0,
+  N1,
+  N2,
+  N3
 };
