@@ -20,6 +20,22 @@ describe("Tx", () => {
       expect(tx.txOuts[1].amount).to.eq.BN(299000000);
       expect(tx.locktime).to.eq.BN(0);
     });
+
+    // TODO if I run this twice I get: AssertionError: expected 46127884334530560 to equal 300000000
+    it.skip("gets input value from previous tx", done => {
+      const tx = Tx.parse(Buffer.from(txHex, "hex"));
+      expect(tx.version).to.eq.BN(1);
+      expect(tx.txIns.length).to.equal(1);
+      expect(tx.txOuts.length).to.equal(2);
+      expect(tx.txOuts[0].amount).to.eq.BN(1000000);
+      expect(tx.txOuts[1].amount).to.eq.BN(299000000);
+      expect(tx.locktime).to.eq.BN(0);
+
+      tx.txIns[0].value(Tx.parse).then(() => {
+        expect(tx.txIns[0].amount).to.eq.BN(300000000);
+        done();
+      });
+    });
   });
 
   describe("serialize", () => {

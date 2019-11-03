@@ -17,6 +17,10 @@ class TxIn {
     this.prevIndex = prevIndex;
     this.scriptSig = scriptSig; // TODO || new Script();
     this.sequence = sequence;
+
+    // Coming from the corresponding previous tx output:
+    this.amount = undefined;
+    this.scriptPubKey = undefined;
   }
 
   /**
@@ -40,6 +44,22 @@ class TxIn {
       this.scriptSig.reverse(), // TODO script
       this.sequence.reverse()
     ]);
+  }
+
+  value(parseTxFn) {
+    return fetchTx(this.prevTx.toString("hex"))
+      .then(txHex => parseTxFn(txHex))
+      .then(tx => {
+        this.amount = tx.txOuts[this.prevIndex].amount;
+      });
+  }
+
+  scriptPubKey(parseTxFn) {
+    return fetchTx(this.prevTx.toString("hex"))
+      .then(txHex => parseTxFn(txHex))
+      .then(tx => {
+        this.scriptPubKey = tx.txOuts[this.prevIndex].scriptPubKey;
+      });
   }
 }
 

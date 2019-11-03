@@ -13,15 +13,11 @@ function getUrl(testnet = false) {
 function fetchTx(txId, testnet = false, fresh = false) {
   if (fresh || !Object.prototype.hasOwnProperty.call(cache, txId)) {
     const url = `${getUrl(testnet)}/tx/${txId}?format=hex`;
-    return axios
-      .get(url)
-      .catch(error => console.log(error))
-      .then(response => {
-        const txHex = Buffer.from(response.data, "hex");
-        // const tx = Tx.parse(txHex); // TODO no idea why this is undefined
-        cache[txId] = txHex;
-        return txHex;
-      });
+    return axios.get(url).then(response => {
+      const txHex = Buffer.from(response.data, "hex");
+      cache[txId] = txHex; // Tx.parse(txHex);
+      return cache[txId];
+    });
   }
   return Promise.resolve(cache[txId]);
 }
