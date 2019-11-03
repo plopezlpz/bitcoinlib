@@ -1,3 +1,4 @@
+const { Buffer } = require("buffer");
 const BufferReader = require("../utils/BufferReader");
 const TxIn = require("./TxIn");
 const TxOut = require("./TxOut");
@@ -35,8 +36,20 @@ class Tx {
     for (let i = N0; i.lt(numOfOutputs); i = i.add(N1)) {
       txOuts.push(TxOut.parse(br));
     }
+    const locktime = br.read(4);
 
-    return new Tx(version, txIns, txOuts);
+    return new Tx(version, txIns, txOuts, locktime);
+  }
+
+  serialize() {
+    return Buffer.concat([
+      this.version.toArrayLike(Buffer, "le", 4),
+      BufferReader.toVarIntNum(this.txIns.length),
+      Buffer.concat(this.txIns.map(i => i.serialize())),
+      BufferReader.toVarIntNum(this.txOuts.length),
+      Buffer.concat(this.txOuts.map(o => o.serialize())),
+      this.locktime
+    ]);
   }
 }
 
