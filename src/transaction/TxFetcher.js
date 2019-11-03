@@ -1,6 +1,6 @@
-const request = require("request");
+const axios = require("axios").default;
 const { Buffer } = require("buffer");
-const Tx = require("./Tx");
+// const Tx = require("./Tx");
 
 const cache = {};
 
@@ -10,18 +10,20 @@ function getUrl(testnet = false) {
     : "https://blockchain.info";
 }
 
-function fetch(txId, testnet = false, fresh = false) {
+function fetchTx(txId, testnet = false, fresh = false) {
   if (fresh || !Object.prototype.hasOwnProperty.call(cache, txId)) {
     const url = `${getUrl(testnet)}/tx/${txId}?format=hex`;
-
-    request(url, (error, response, body) => {
-      if (error) {
-        console.log(error);
-        return;
-      }
-      const raw = Buffer.from(body, "hex");
-      const tx = Tx.parse(raw);
-      cache[txId] = tx;
-    });
+    return axios
+      .get(url)
+      .catch(error => console.log(error))
+      .then(response => {
+        const txHex = Buffer.from(response.data, "hex");
+        // const tx = Tx.parse(txHex); // TODO no idea why this is undefined
+        cache[txId] = txHex;
+        return txHex;
+      });
   }
+  return Promise.resolve(cache[txId]);
 }
+
+module.exports = { fetchTx };

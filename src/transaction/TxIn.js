@@ -3,6 +3,7 @@ const { Buffer } = require("buffer");
 const BN = require("bn.js");
 // eslint-disable-next-line no-unused-vars
 const BufferReader = require("../utils/BufferReader");
+const { fetchTx } = require("./txFetcher");
 
 class TxIn {
   constructor(prevTx, prevIndex, scriptSig, sequence = 0xffffffff) {
