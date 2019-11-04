@@ -47,19 +47,15 @@ class TxIn {
   }
 
   value(parseTxFn) {
-    return fetchTx(this.prevTx.toString("hex"))
-      .then(txHex => parseTxFn(txHex))
-      .then(tx => {
-        this.amount = tx.txOuts[this.prevIndex].amount;
-      });
+    return fetchTx(this.prevTx.toString("hex"), parseTxFn).then(tx => {
+      this.amount = tx.txOuts[this.prevIndex].amount;
+    });
   }
 
   scriptPubKey(parseTxFn) {
-    return fetchTx(this.prevTx.toString("hex"))
-      .then(txHex => parseTxFn(txHex))
-      .then(tx => {
-        this.scriptPubKey = tx.txOuts[this.prevIndex].scriptPubKey;
-      });
+    return fetchTx(this.prevTx.toString("hex"), parseTxFn).then(tx => {
+      this.scriptPubKey = tx.txOuts[this.prevIndex].scriptPubKey;
+    });
   }
 }
 
