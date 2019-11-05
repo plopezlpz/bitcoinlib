@@ -36,6 +36,16 @@ describe("Tx", () => {
         done();
       });
     });
+
+    it.skip("gets input value from previous tx", done => {
+      const tx = Tx.parse(Buffer.from(txHex, "hex"));
+      tx.fee()
+        .then(value => {
+          expect(value).to.eq.BN(0);
+          done();
+        })
+        .catch(error => done(error));
+    });
   });
 
   describe("serialize", () => {

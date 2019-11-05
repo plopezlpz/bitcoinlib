@@ -1,3 +1,4 @@
+const { uniqBy } = require("lodash");
 const { Buffer } = require("buffer");
 const BufferReader = require("../utils/BufferReader");
 const TxIn = require("./TxIn");
@@ -50,6 +51,22 @@ class Tx {
       Buffer.concat(this.txOuts.map(o => o.serialize())),
       this.locktime
     ]);
+  }
+
+  fee() {
+    // ins_amount - outs_amount
+    return Promise.all(
+      // populate the txIns[n].amount
+      uniqBy(this.txIns, i => i.prevTx).map(i => i.value(Tx.parse))
+    )
+      .then(() =>
+        this.txIns.reduce((sum, currentIn) => sum.add(currentIn.amount), N0)
+      )
+      .then(insValue =>
+        insValue.sub(
+          this.txOuts.reduce((sum, currentTx) => sum.add(currentTx.amount), N0)
+        )
+      );
   }
 }
 
