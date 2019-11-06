@@ -1,13 +1,13 @@
 const BN = require("bn.js");
 const { stub } = require("sinon");
 const { expect } = require("chai");
-const sha = require("../utils/sha");
+const { sha256 } = require("../utils/hash");
 const PrivateKey = require("./PrivateKey");
 
 describe("PrivateKey", () => {
   it("signs tx (brainwallet style)", () => {
-    const e = new BN(sha("my secret"), "hex");
-    const z = new BN(sha("my message"), "hex");
+    const e = new BN(sha256("my secret"), "hex");
+    const z = new BN(sha256("my message"), "hex");
     const priv = new PrivateKey(e);
     stub(priv, "deterministicK").callsFake(() => new BN(1234567890));
 
@@ -20,8 +20,8 @@ describe("PrivateKey", () => {
   });
 
   it("deterministicK", () => {
-    const e = new BN(sha("my secret"), "hex");
-    const z = new BN(sha("my message"), "hex");
+    const e = new BN(sha256("my secret"), "hex");
+    const z = new BN(sha256("my message"), "hex");
     const priv = new PrivateKey(e);
 
     // prettier-ignore

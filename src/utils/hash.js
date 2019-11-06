@@ -1,5 +1,4 @@
 const hash = require("hash.js");
-const shajs = require("sha.js");
 
 // // TODO this doesn't work properly
 // function hash256(bytes, enc) {
@@ -21,7 +20,7 @@ const shajs = require("sha.js");
  */
 // prettier-ignore
 function sha256(msg) {
-  return shajs("sha256").update(shajs("sha256").update(msg).digest()).digest("hex");
+  return hash.sha256().update(hash.sha256().update(msg).digest()).digest("hex");
 }
 
 function hash160(msg) {
