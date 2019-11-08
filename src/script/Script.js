@@ -41,7 +41,7 @@ class Script {
     return new Script(cmds);
   }
 
-  rawSerialize() {
+  serialize() {
     const bw = new BufferWriter();
     for (let i = 0; i < this.cmds.length; i += 1) {
       const cmd = this.cmds[i];
@@ -66,12 +66,6 @@ class Script {
       }
     }
     return bw.toBufWithVarIntSize();
-  }
-
-  serialize() {
-    return this.rawSerialize();
-    // TODO I don't know why this should not be added here
-    // return Buffer.concat([BufferReader.toVarIntNum(serial.length), serial]);
   }
 }
 
