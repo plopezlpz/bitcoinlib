@@ -49,7 +49,7 @@ describe("Tx", () => {
   });
 
   describe("serialize", () => {
-    it("serializes tx", () => {
+    it.only("serializes tx", () => {
       const tx = Tx.parse(Buffer.from(txHex, "hex"));
       const result = tx.serialize();
       expect(result.toString("hex")).to.equal(txHex);

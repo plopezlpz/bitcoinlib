@@ -3,6 +3,7 @@ const { Buffer } = require("buffer");
 const BN = require("bn.js");
 // eslint-disable-next-line no-unused-vars
 const BufferReader = require("../utils/BufferReader");
+const Script = require("../script/Script");
 
 class TxOut {
   constructor(amount, scriptPubKey) {
@@ -11,7 +12,7 @@ class TxOut {
      */
     this.amount = amount;
     /**
-     * @type {Buffer}
+     * @type {Script}
      */
     this.scriptPubKey = scriptPubKey;
   }
@@ -21,16 +22,14 @@ class TxOut {
    */
   static parse(br) {
     const amount = br.readBN(8);
-    // TODO use script parse
-    const scriptPubKey = br.readVarLenBuf();
+    const scriptPubKey = Script.parse(br); // readVarLenBuf();
     return new TxOut(amount, scriptPubKey);
   }
 
   serialize() {
     return Buffer.concat([
       Buffer.from(this.amount.toArrayLike(Buffer, "le", 8)),
-      BufferReader.toVarIntNum(this.scriptPubKey.byteLength),
-      this.scriptPubKey.reverse()
+      this.scriptPubKey.serialize()
     ]);
   }
 }

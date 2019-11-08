@@ -4,6 +4,7 @@ const BN = require("bn.js");
 // eslint-disable-next-line no-unused-vars
 const BufferReader = require("../utils/BufferReader");
 const { fetchTx } = require("./txFetcher");
+const Script = require("../script/Script");
 
 class TxIn {
   constructor(prevTx, prevIndex, scriptSig, sequence = 0xffffffff) {
@@ -15,7 +16,10 @@ class TxIn {
      * @type {BN}
      */
     this.prevIndex = prevIndex;
-    this.scriptSig = scriptSig; // TODO || new Script();
+    /**
+     * @type {Script}
+     */
+    this.scriptSig = scriptSig || new Script();
     this.sequence = sequence;
 
     // Coming from the corresponding previous tx output:
@@ -29,8 +33,7 @@ class TxIn {
   static parse(br) {
     const prevTx = br.read(32);
     const prevIndex = br.readBN(4);
-    // TODO will be Script.parse
-    const scriptSig = br.readVarLenBuf();
+    const scriptSig = Script.parse(br);
     const sequence = br.read(4);
 
     return new TxIn(prevTx, prevIndex, scriptSig, sequence);
@@ -40,8 +43,7 @@ class TxIn {
     return Buffer.concat([
       this.prevTx.reverse(),
       this.prevIndex.toArrayLike(Buffer, "le", 4),
-      BufferReader.toVarIntNum(this.scriptSig.byteLength),
-      this.scriptSig.reverse(), // TODO script
+      this.scriptSig.serialize(),
       this.sequence.reverse()
     ]);
   }
