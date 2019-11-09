@@ -2,11 +2,11 @@ const Signature = require("../crypto/Signature");
 const { Point } = require("../crypto/Point");
 
 // TODO these are the ops I need to do in order to evaluate
-function op_dup() {}
+// function op_dup() {}
 
-function op_hash160() {}
+// function op_hash160() {}
 
-function op_equalverify() {}
+// function op_equalverify() {}
 
 /**
  * @param {number[] | Buffer[]} stack
