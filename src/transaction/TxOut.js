@@ -22,7 +22,7 @@ class TxOut {
    */
   static parse(br) {
     const amount = br.readBN(8);
-    const scriptPubKey = Script.parse(br); // readVarLenBuf();
+    const scriptPubKey = Script.parse(br);
     return new TxOut(amount, scriptPubKey);
   }
 

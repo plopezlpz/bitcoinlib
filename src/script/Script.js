@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 const BufferReader = require("../utils/BufferReader");
 const BufferWriter = require("../utils/BufferWriter");
+const { getOp } = require("./op");
 
 class Script {
   constructor(cmds) {
@@ -66,6 +67,52 @@ class Script {
       }
     }
     return bw.toBufWithVarIntSize();
+  }
+
+  /**
+   * @param {string} z The signature hash
+   */
+  evaluate(z) {
+    // TODO should I reverse them? depends on how parse orders the cmds
+    const cmds = [...this.cmds].reverse();
+    const stack = [];
+    const altStack = [];
+    while (cmds.length > 0) {
+      const cmd = cmds.pop();
+      if (typeof cmd === "number") {
+        const { op, name } = getOp(cmd);
+        if ([99, 100].includes(cmd)) {
+          // TODO code the actual operations!!!!
+          if (!op(stack, cmds)) {
+            console.log(`bad op: ${name}`);
+            return false;
+          }
+        } else if ([107, 108].includes(cmd)) {
+          if (!op(stack, altStack)) {
+            console.log(`bad op: ${name}`);
+            return false;
+          }
+        } else if ([172, 173, 174, 175].includes(cmd)) {
+          if (!op(stack, z)) {
+            console.log(`bad op: ${name}`);
+            return false;
+          }
+        } else if (!op(stack)) {
+          console.log(`bad op: ${name}`);
+          return false;
+        }
+      } else {
+        stack.push(cmd);
+      }
+    }
+    if (stack.length === 0) {
+      return false;
+    }
+    // maybe
+    if (stack.pop() !== 0x01) {
+      return false;
+    }
+    return true;
   }
 }
 

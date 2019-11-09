@@ -2,6 +2,7 @@
 const BN = require("bn.js");
 const { Buffer } = require("buffer");
 const { toBN } = require("../utils/num");
+const BufferReader = require("../utils/BufferReader");
 
 function lstrip(buffer, byte) {
   let pos;
@@ -12,6 +13,19 @@ function lstrip(buffer, byte) {
     }
   }
   return buffer.slice(pos);
+}
+
+/**
+ * @param {BufferReader} br
+ */
+function parseEl(br) {
+  const marker = br.read(1)[0];
+  if (marker !== 0x02) {
+    throw Error("Bad signature");
+  }
+  const length = br.read(1)[0];
+  const el = br.readBN(length, "be");
+  return { length, el };
 }
 
 /**
@@ -52,6 +66,27 @@ class Signature {
       r,
       s
     ]);
+  }
+
+  /**
+   * @param {Buffer} der
+   */
+  static parse(der) {
+    const br = new BufferReader(der);
+    const compound = br.read(1)[0];
+    if (compound !== 0x30) {
+      throw Error("Bad signature");
+    }
+    const length = br.read(1)[0];
+    if (length + 2 !== der.byteLength) {
+      throw Error("Bad signature length");
+    }
+    const r = parseEl(br);
+    const s = parseEl(br);
+    if (der.byteLength !== 6 + r.length + s.length) {
+      throw Error("Signature too long");
+    }
+    return new Signature(r.el, s.el);
   }
 
   toString(radix) {
