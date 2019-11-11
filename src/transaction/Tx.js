@@ -49,6 +49,7 @@ class TxIn {
     ]);
   }
 
+  // TODO very similar to #serialize maybe refactor
   async serializeForSigning(isIdxToSign) {
     if (isIdxToSign) {
       await this.populateFromPrevOut();
@@ -66,24 +67,21 @@ class TxIn {
     ]);
   }
 
-  populateFromPrevOut() {
+  async populateFromPrevOut() {
     // eslint-disable-next-line no-use-before-define
-    return fetchTx(this.prevTx.toString("hex"), Tx.parse).then(tx => {
-      this.amount = tx.txOuts[this.prevIndex].amount;
-      this.scriptPubKey = tx.txOuts[this.prevIndex].scriptPubKey;
-    });
+    const tx = await fetchTx(this.prevTx.toString("hex"), Tx.parse);
+    this.amount = tx.txOuts[this.prevIndex].amount;
+    this.scriptPubKey = tx.txOuts[this.prevIndex].scriptPubKey;
   }
 
-  value(parseTxFn) {
-    return fetchTx(this.prevTx.toString("hex"), parseTxFn).then(tx => {
-      this.amount = tx.txOuts[this.prevIndex].amount;
-    });
+  async value(parseTxFn) {
+    const tx = await fetchTx(this.prevTx.toString("hex"), parseTxFn);
+    this.amount = tx.txOuts[this.prevIndex].amount;
   }
 
-  scriptPubKey(parseTxFn) {
-    return fetchTx(this.prevTx.toString("hex"), parseTxFn).then(tx => {
-      this.scriptPubKey = tx.txOuts[this.prevIndex].scriptPubKey;
-    });
+  async scriptPubKey(parseTxFn) {
+    const tx = await fetchTx(this.prevTx.toString("hex"), parseTxFn);
+    this.scriptPubKey = tx.txOuts[this.prevIndex].scriptPubKey;
   }
 }
 
