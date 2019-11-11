@@ -3,6 +3,7 @@ const BN = require("bn.js");
 const bnChai = require("bn-chai");
 const { Buffer } = require("buffer");
 const Tx = require("./Tx");
+const { fetchTx } = require("./txFetcher");
 
 chai.use(bnChai(BN));
 const { expect } = chai;
@@ -53,6 +54,21 @@ describe("Tx", () => {
       const tx = Tx.parse(Buffer.from(txHex, "hex"));
       const result = tx.serialize();
       expect(result.toString("hex")).to.equal(txHex);
+    });
+
+    it("sigHash", done => {
+      const expected =
+        "27e0c5994dec7824e56dec6b2fcb342eb7cdb0d0957c2fce9882f715e85d81a6";
+      fetchTx(
+        "452c629d67e41baec3ac6f04fe744b4b9617f8f859c63b3002f8684e7a4fee03",
+        Tx.parse
+      )
+        .then(tx => tx.sigHash(0))
+        .then(res => {
+          expect(res.toString("hex")).to.equal(expected);
+          done();
+        })
+        .catch(error => done(error));
     });
   });
 });

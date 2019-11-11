@@ -17,6 +17,7 @@ const hash = require("hash.js");
 /**
  * Performs a double sha256 hash
  * @param {string} msg the message to hash
+ * @returns {string} the hashed message in hex
  */
 // prettier-ignore
 function sha256(msg) {

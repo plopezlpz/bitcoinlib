@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // eslint-disable-next-line no-unused-vars
 const BufferReader = require("../utils/BufferReader");
 const BufferWriter = require("../utils/BufferWriter");
@@ -63,7 +64,7 @@ class Script {
           throw Error("too long an cmd");
         }
         // Write in LE
-        bw.write(cmd.reverse());
+        bw.write(Buffer.from(cmd).reverse());
       }
     }
     return bw.toBufWithVarIntSize();

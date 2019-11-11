@@ -1,12 +1,56 @@
 const Signature = require("../crypto/Signature");
 const { Point } = require("../crypto/Point");
+const { hash160 } = require("../utils/hash");
 
 // TODO these are the ops I need to do in order to evaluate
-// function op_dup() {}
+function opDup(stack) {
+  if (stack.length < 1) {
+    return false;
+  }
+  stack.push(stack.slice(-1)[0]);
+  return true;
+}
 
-// function op_hash160() {}
+function opHash160(stack) {
+  if (stack.length < 1) {
+    return false;
+  }
+  const el = stack.pop();
+  stack.push(hash160(el));
+  return true;
+}
 
-// function op_equalverify() {}
+/**
+ * @param {Buffer[]} stack
+ */
+function opEqual(stack) {
+  if (stack.length < 2) {
+    return false;
+  }
+  const el1 = stack.pop();
+  const el2 = stack.pop();
+  if (el1 === el2 || el1.equals(el2)) {
+    stack.push(0x01);
+  } else {
+    stack.push(0x00);
+  }
+  return true;
+}
+
+function opVerify(stack) {
+  if (stack.length < 1) {
+    return false;
+  }
+  const el = stack.pop();
+  if (el === 0x00) {
+    return false;
+  }
+  return true;
+}
+
+function opEqualverify(stack) {
+  return opEqual(stack) && opVerify(stack);
+}
 
 /**
  * @param {number[] | Buffer[]} stack
@@ -53,7 +97,7 @@ const OP_CODE_FUNCTIONS = {
   // 97: op_nop,
   // 99: op_if,
   // 100: op_notif,
-  // 105: op_verify,
+  105: { op: opVerify, name: "OP_VERIFY" },
   // 106: op_return,
   // 107: op_toaltstack,
   // 108: op_fromaltstack,
@@ -66,7 +110,7 @@ const OP_CODE_FUNCTIONS = {
   // 115: op_ifdup,
   // 116: op_depth,
   // 117: op_drop,
-  // 118: op_dup,
+  118: { op: opDup, name: "OP_DUP" },
   // 119: op_nip,
   // 120: op_over,
   // 121: op_pick,
@@ -75,8 +119,8 @@ const OP_CODE_FUNCTIONS = {
   // 124: op_swap,
   // 125: op_tuck,
   // 130: op_size,
-  // 135: op_equal,
-  // 136: op_equalverify,
+  135: { op: opEqual, name: "OP_EQUAL" },
+  136: { op: opEqualverify, name: "OP_EQUALVERIFY" },
   // 139: op_1add,
   // 140: op_1sub,
   // 143: op_negate,
@@ -101,7 +145,7 @@ const OP_CODE_FUNCTIONS = {
   // 166: op_ripemd160,
   // 167: op_sha1,
   // 168: op_sha256,
-  // 169: op_hash160,
+  169: { op: opHash160, name: "OP_HASH160" },
   // 170: op_hash256,
   172: { op: opChecksig, name: "OP_CHECKSIG" }
   // 173: op_checksigverify,
