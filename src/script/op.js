@@ -16,7 +16,7 @@ function opHash160(stack) {
     return false;
   }
   const el = stack.pop();
-  stack.push(hash160(el));
+  stack.push(Buffer.from(hash160(el), "hex"));
   return true;
 }
 

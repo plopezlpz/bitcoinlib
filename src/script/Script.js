@@ -22,15 +22,15 @@ class Script {
       const currentByte = current.readUInt8();
       if (currentByte >= 1 && currentByte <= 75) {
         // the next n bytes are an element
-        cmds.push(br.read(currentByte));
+        cmds.push(br.read(currentByte, "be"));
         count += currentByte;
       } else if (currentByte === 76) {
         const dataLength = br.read(1).readUInt8();
-        cmds.push(br.read(dataLength));
+        cmds.push(br.read(dataLength, "be"));
         count += dataLength + 1;
       } else if (currentByte === 77) {
         const dataLength = br.read(2).readUInt8();
-        cmds.push(br.read(dataLength));
+        cmds.push(br.read(dataLength, "be"));
         count += dataLength + 2;
       } else {
         const opCode = currentByte;
@@ -41,6 +41,10 @@ class Script {
       throw Error("parsing script failed");
     }
     return new Script(cmds);
+  }
+
+  static combine(s1, s2) {
+    return new Script([...s1.cmds, ...s2.cmds]);
   }
 
   serialize() {
@@ -64,7 +68,7 @@ class Script {
           throw Error("too long an cmd");
         }
         // Write in LE
-        bw.write(Buffer.from(cmd).reverse());
+        bw.write(cmd);
       }
     }
     return bw.toBufWithVarIntSize();

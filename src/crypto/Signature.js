@@ -31,6 +31,7 @@ function parseEl(br) {
 /**
  *
  * @param {BN} val
+ * @returns {Buffer} The der encoded signature
  */
 function toDerVal(val) {
   let buff = val.toArrayLike(Buffer, "be", 32);

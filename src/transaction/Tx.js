@@ -169,6 +169,36 @@ class Tx {
     ]);
     return new BN(sha256(serialization), "hex", "be");
   }
+
+  /**
+   * Verify this transaction
+   */
+  async verify() {
+    await this.fee();
+    if (this.fee < 0) {
+      return false;
+    }
+
+    for (let i = 0; i < this.txIns.length; i += 1) {
+      const ok = await this.verifyInput(i);
+      if (!ok) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Returns whether the input has a valid signature
+   * @param {number} inputIndex
+   */
+  async verifyInput(inputIndex) {
+    const input = this.txIns[inputIndex];
+    await input.populateFromPrevOut();
+    const z = await this.sigHash(inputIndex);
+    const comb = Script.combine(input.scriptSig, input.scriptPubKey);
+    return comb.evaluate(z);
+  }
 }
 
 module.exports = Tx;

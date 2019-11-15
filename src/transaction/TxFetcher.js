@@ -9,6 +9,9 @@ function getUrl(testnet = false) {
     : "https://blockchain.info";
 }
 
+/**
+ * @returns {Promise<Tx>} returns a transaction
+ */
 function fetchTx(txId, parseTxFn, testnet = false, fresh = false) {
   if (fresh || !Object.prototype.hasOwnProperty.call(cache, txId)) {
     return axios

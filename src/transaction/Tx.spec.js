@@ -70,5 +70,18 @@ describe("Tx", () => {
         })
         .catch(error => done(error));
     });
+
+    it("test_verify_p2pkh", done => {
+      fetchTx(
+        "452c629d67e41baec3ac6f04fe744b4b9617f8f859c63b3002f8684e7a4fee03",
+        Tx.parse
+      )
+        .then(tx => tx.verify())
+        .then(res => {
+          expect(res).to.be.true;
+          done();
+        })
+        .catch(error => done(error));
+    });
   });
 });

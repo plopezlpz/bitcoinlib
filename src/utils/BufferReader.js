@@ -49,7 +49,7 @@ class BufferReader {
     const res = this.buf.slice(this.pos, this.pos + numberOfBytes);
     this.pos += numberOfBytes;
     if (endianness === "le") {
-      return Buffer.from(res).reverse();
+      return res.reverse();
     }
     if (endianness === "be") {
       return res;
