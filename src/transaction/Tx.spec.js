@@ -22,8 +22,7 @@ describe("Tx", () => {
       expect(tx.locktime).to.eq.BN(0);
     });
 
-    // TODO if I run this twice I get: AssertionError: expected 46127884334530560 to equal 300000000
-    it.skip("gets input value from previous tx", done => {
+    it.skip("gets input value from previous tx, done twice", done => {
       const tx = Tx.parse(Buffer.from(txHex, "hex"));
       expect(tx.version).to.eq.BN(1);
       expect(tx.txIns.length).to.equal(1);
@@ -32,10 +31,17 @@ describe("Tx", () => {
       expect(tx.txOuts[1].amount).to.eq.BN(299000000);
       expect(tx.locktime).to.eq.BN(0);
 
-      tx.txIns[0].value(Tx.parse).then(() => {
-        expect(tx.txIns[0].amount).to.eq.BN(300000000);
-        done();
-      });
+      tx.txIns[0]
+        .value(Tx.parse)
+        .then(() => {
+          expect(tx.txIns[0].amount).to.eq.BN(300000000);
+        })
+        .then(() => tx.txIns[0].value(Tx.parse))
+        .then(() => {
+          expect(tx.txIns[0].amount).to.eq.BN(300000000);
+          done();
+        })
+        .catch(err => done(err));
     });
 
     it.skip("gets input value from previous tx", done => {
@@ -71,7 +77,7 @@ describe("Tx", () => {
         .catch(error => done(error));
     });
 
-    it.only("test_verify_p2pkh", done => {
+    it("test_verify_p2pkh", done => {
       const tx1 =
         "1c87380b22683d970bf226200d9a5500c0d9cf86089a8e2840c081095e4b2c23";
       fetchTx(tx1, Tx.parse)
