@@ -63,6 +63,7 @@ class TxIn {
     return Buffer.concat([
       Buffer.from(this.prevTx).reverse(),
       this.prevIndex.toArrayLike(Buffer, "le", 4),
+      Buffer.from([0]), // substitute scriptPubKey for 0x00
       Buffer.from(this.sequence).reverse()
     ]);
   }

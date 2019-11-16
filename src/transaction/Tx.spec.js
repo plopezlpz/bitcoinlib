@@ -71,11 +71,10 @@ describe("Tx", () => {
         .catch(error => done(error));
     });
 
-    it("test_verify_p2pkh", done => {
-      fetchTx(
-        "452c629d67e41baec3ac6f04fe744b4b9617f8f859c63b3002f8684e7a4fee03",
-        Tx.parse
-      )
+    it.only("test_verify_p2pkh", done => {
+      const tx1 =
+        "1c87380b22683d970bf226200d9a5500c0d9cf86089a8e2840c081095e4b2c23";
+      fetchTx(tx1, Tx.parse)
         .then(tx => tx.verify())
         .then(res => {
           expect(res).to.be.true;

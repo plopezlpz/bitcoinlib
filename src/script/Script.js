@@ -114,7 +114,8 @@ class Script {
       return false;
     }
     // maybe
-    if (stack.pop() !== 0x01) {
+    const result = stack.pop();
+    if (result !== 0x01) {
       return false;
     }
     return true;
