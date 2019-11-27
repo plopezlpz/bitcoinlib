@@ -6,14 +6,14 @@ const BufferReader = require("../utils/BufferReader");
 const Script = require("../script/Script");
 
 class TxOut {
+  /**
+   * @param {BN} amount
+   * @param {Script} scriptPubKey
+   */
   constructor(amount, scriptPubKey) {
-    /**
-     * @type {BN}
-     */
+    /** @type {BN} */
     this.amount = amount;
-    /**
-     * @type {Script}
-     */
+    /** @type {Script} */
     this.scriptPubKey = scriptPubKey;
   }
 

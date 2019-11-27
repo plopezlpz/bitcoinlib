@@ -2,7 +2,8 @@ const chai = require("chai");
 const BN = require("bn.js");
 const bnChai = require("bn-chai");
 const { Buffer } = require("buffer");
-const Tx = require("./Tx");
+const { Tx } = require("./Tx");
+const { sha256 } = require("../utils/hash");
 const { fetchTx } = require("./txFetcher");
 
 chai.use(bnChai(BN));
@@ -88,5 +89,9 @@ describe("Tx", () => {
         })
         .catch(error => done(error));
     });
+  });
+
+  describe.skip("sign", () => {
+    it("sign testnet tx", () => {});
   });
 });

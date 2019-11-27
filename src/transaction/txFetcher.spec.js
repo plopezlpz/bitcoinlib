@@ -5,7 +5,7 @@ const bnChai = require("bn-chai");
 chai.use(bnChai(BN));
 const { expect } = chai;
 const { fetchTx } = require("./txFetcher");
-const Tx = require("./Tx");
+const { Tx } = require("./Tx");
 
 describe.skip("txFetcher", () => {
   it("fetches a tx", done => {

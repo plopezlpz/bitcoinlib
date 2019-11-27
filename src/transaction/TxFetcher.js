@@ -5,8 +5,8 @@ const cache = {};
 
 function getUrl(testnet = false) {
   return testnet
-    ? "https://testnet.blockchain.info"
-    : "https://blockchain.info";
+    ? "http://testnet.programmingbitcoin.com"
+    : "http://mainnet.programmingbitcoin.com";
 }
 
 /**
@@ -15,7 +15,7 @@ function getUrl(testnet = false) {
 function fetchTx(txId, parseTxFn, testnet = false, fresh = false) {
   if (fresh || !Object.prototype.hasOwnProperty.call(cache, txId)) {
     return axios
-      .get(`${getUrl(testnet)}/tx/${txId}?format=hex`)
+      .get(`${getUrl(testnet)}/tx/${txId}.hex`)
       .then(response => {
         const txHex = Buffer.from(response.data, "hex");
         // I cannot just use `Tx.parse(txHex);` to avoid circular dependency

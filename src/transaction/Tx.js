@@ -10,9 +10,18 @@ const { sha256 } = require("../utils/hash");
 
 const { fetchTx } = require("./txFetcher");
 const Script = require("../script/Script");
+// eslint-disable-next-line no-unused-vars
+const PrivateKey = require("../crypto/PrivateKey");
+
+const SIGHASH_ALL = Buffer.from([1, 0, 0, 0]);
 
 class TxIn {
-  constructor(prevTx, prevIndex, scriptSig, sequence = 0xffffffff) {
+  constructor(
+    prevTx,
+    prevIndex,
+    scriptSig,
+    sequence = Buffer.from([0xff, 0xff, 0xff, 0xff])
+  ) {
     /** @type {Buffer} */
     this.prevTx = prevTx;
     /** @type {BN} */
@@ -23,6 +32,7 @@ class TxIn {
 
     // *******************************
     // Coming from the corresponding previous tx output:
+    /** @type {BN} */
     this.amount = undefined;
     /** @type {Script} */
     this.scriptPubKey = undefined;
@@ -50,9 +60,19 @@ class TxIn {
   }
 
   // TODO very similar to #serialize maybe refactor
-  async serializeForSigning(isIdxToSign) {
+  async serializeForSigning(isIdxToSign, testnet = false) {
     if (isIdxToSign) {
-      await this.populateFromPrevOut();
+      // await this.populateFromPrevOut(testnet);
+      // TODO pablo !!!!!!!!!!!!!!
+      this.amount = new BN(3158023);
+      this.scriptPubKey = new Script([
+        118,
+        169,
+        Buffer.from("a8ecf9dfee91ab38f70c1348bc076b27be08c585", "hex"),
+        136,
+        172
+      ]);
+      // TODO remove previous 2 lines!!!
       return Buffer.concat([
         Buffer.from(this.prevTx).reverse(),
         this.prevIndex.toArrayLike(Buffer, "le", 4),
@@ -68,36 +88,42 @@ class TxIn {
     ]);
   }
 
-  async populateFromPrevOut() {
+  async populateFromPrevOut(testnet = false) {
     // eslint-disable-next-line no-use-before-define
-    const tx = await fetchTx(this.prevTx.toString("hex"), Tx.parse);
+    const tx = await fetchTx(this.prevTx.toString("hex"), Tx.parse, testnet);
     this.amount = tx.txOuts[this.prevIndex].amount;
     this.scriptPubKey = tx.txOuts[this.prevIndex].scriptPubKey;
   }
 
-  async value(parseTxFn) {
-    const tx = await fetchTx(this.prevTx.toString("hex"), parseTxFn);
+  async value(parseTxFn, testnet = false) {
+    const tx = await fetchTx(this.prevTx.toString("hex"), parseTxFn, testnet);
     this.amount = tx.txOuts[this.prevIndex].amount;
   }
 
-  async scriptPubKey(parseTxFn) {
-    const tx = await fetchTx(this.prevTx.toString("hex"), parseTxFn);
+  // TODO I don't think this is being used
+  async scriptPubKey(parseTxFn, testnet = false) {
+    const tx = await fetchTx(this.prevTx.toString("hex"), parseTxFn, testnet);
     this.scriptPubKey = tx.txOuts[this.prevIndex].scriptPubKey;
   }
 }
 
 class Tx {
+  /**
+   * @param {BN} version
+   * @param {TxIn[]} txIns
+   * @param {TxOut[]} txOuts
+   * @param {Buffer} locktime
+   * @param {boolean} [testnet=false]
+   */
   constructor(version, txIns, txOuts, locktime, testnet = false) {
     this.version = version;
-    /**
-     * @type {TxIn[]}
-     */
+    /** @type {TxIn[]} */
     this.txIns = txIns;
-    /**
-     * @type {TxOut[]}
-     */
+    /** @type {TxOut[]} */
     this.txOuts = txOuts;
+    /** @type {Buffer} */
     this.locktime = locktime;
+    /** @type {boolean} */
     this.testnet = testnet;
   }
 
@@ -138,7 +164,9 @@ class Tx {
     // ins_amount - outs_amount
     return Promise.all(
       // populate the txIns[n].amount
-      uniqBy(this.txIns, i => i.prevTx).map(i => i.value(Tx.parse))
+      uniqBy(this.txIns, i => i.prevTx).map(i =>
+        i.value(Tx.parse, this.testnet)
+      )
     )
       .then(() =>
         this.txIns.reduce((sum, currentIn) => sum.add(currentIn.amount), N0)
@@ -156,7 +184,9 @@ class Tx {
    */
   async sigHash(inputIndex) {
     const inputs = await Promise.all(
-      this.txIns.map((i, index) => i.serializeForSigning(index === inputIndex))
+      this.txIns.map((i, index) =>
+        i.serializeForSigning(index === inputIndex, this.testnet)
+      )
     );
 
     const serialization = Buffer.concat([
@@ -166,7 +196,7 @@ class Tx {
       BufferWriter.toVarIntNum(this.txOuts.length),
       Buffer.concat(this.txOuts.map(o => o.serialize())),
       Buffer.from(this.locktime).reverse(),
-      Buffer.from([1, 0, 0, 0]) // SIGHASH_ALL hardcoded
+      SIGHASH_ALL // hardcoded
     ]);
     return new BN(sha256(serialization), "hex", "be");
   }
@@ -195,11 +225,25 @@ class Tx {
    */
   async verifyInput(inputIndex) {
     const input = this.txIns[inputIndex];
-    await input.populateFromPrevOut();
+    // TODO !!!!!!!!!!! await input.populateFromPrevOut(this.testnet);
     const z = await this.sigHash(inputIndex);
     const comb = Script.combine(input.scriptSig, input.scriptPubKey);
     return comb.evaluate(z);
   }
+
+  /**
+   * @param {number} inputIndex
+   * @param {PrivateKey} privateKey
+   */
+  async signInput(inputIndex, privateKey) {
+    const z = await this.sigHash(inputIndex);
+    const der = privateKey.sign(z).der();
+    const sig = Buffer.concat([der, SIGHASH_ALL]);
+    const sec = privateKey.point.sec();
+    const scriptSig = new Script([sig, sec]);
+    this.txIns[inputIndex].scriptSig = scriptSig;
+    return this.verifyInput(inputIndex);
+  }
 }
 
-module.exports = Tx;
+module.exports = { TxIn, Tx };

@@ -120,6 +120,14 @@ class Script {
     }
     return true;
   }
+
+  /**
+   * Takes a hash160 and returns the p2pkh ScriptPubKey
+   * @param {Buffer} h160 20-byte address hash in h160
+   */
+  static p2pkhScript(h160) {
+    return new Script([0x76, 0xa9, h160, 0x88, 0xac]);
+  }
 }
 
 module.exports = Script;

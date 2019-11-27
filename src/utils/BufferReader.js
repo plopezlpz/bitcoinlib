@@ -34,7 +34,7 @@ class BufferReader {
   }
 
   isEof(num = 0) {
-    return this.pos + num > this.buf.byteLength;
+    return this.pos + num > this.buf.length;
   }
 
   /**

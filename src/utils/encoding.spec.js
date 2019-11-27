@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { Buffer } = require("buffer");
-const { base58, base58Checksum } = require("./encoding");
+const { base58, base58Checksum, decodeBase58 } = require("./encoding");
 
 describe("encoding", () => {
   it("base58", () => {
