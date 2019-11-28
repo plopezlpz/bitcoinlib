@@ -46,7 +46,7 @@ class BufferReader {
     if (this.isEof(numberOfBytes)) {
       throw Error(`cannot read ${numberOfBytes}, reached EOF`);
     }
-    const res = this.buf.slice(this.pos, this.pos + numberOfBytes);
+    const res = Buffer.from(this.buf.slice(this.pos, this.pos + numberOfBytes));
     this.pos += numberOfBytes;
     if (endianness === "le") {
       return res.reverse();
@@ -83,7 +83,7 @@ class BufferReader {
    */
   readVarIntBN() {
     const first = this.read(1);
-    switch (first) {
+    switch (first[0]) {
       case 0xfd:
         return this.readBN(2);
       case 0xfe:

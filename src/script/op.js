@@ -63,7 +63,7 @@ function opChecksig(stack, z) {
   const secPubKey = stack.pop();
   // removing the hashtype
   const derSig = stack.pop();
-  const der = derSig.slice(0, derSig.length - 1);
+  const der = derSig.slice(0, -1);
 
   const pubKey = Point.parse(secPubKey);
   const sig = Signature.parse(der);

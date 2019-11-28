@@ -14,6 +14,7 @@ const Script = require("../script/Script");
 const PrivateKey = require("../crypto/PrivateKey");
 
 const SIGHASH_ALL = Buffer.from([1, 0, 0, 0]);
+const SIGHASH_ALL_ONE = Buffer.from([1]);
 
 class TxIn {
   constructor(
@@ -62,17 +63,7 @@ class TxIn {
   // TODO very similar to #serialize maybe refactor
   async serializeForSigning(isIdxToSign, testnet = false) {
     if (isIdxToSign) {
-      // await this.populateFromPrevOut(testnet);
-      // TODO pablo !!!!!!!!!!!!!!
-      this.amount = new BN(3158023);
-      this.scriptPubKey = new Script([
-        118,
-        169,
-        Buffer.from("a8ecf9dfee91ab38f70c1348bc076b27be08c585", "hex"),
-        136,
-        172
-      ]);
-      // TODO remove previous 2 lines!!!
+      await this.populateFromPrevOut(testnet);
       return Buffer.concat([
         Buffer.from(this.prevTx).reverse(),
         this.prevIndex.toArrayLike(Buffer, "le", 4),
@@ -121,7 +112,7 @@ class Tx {
     this.txIns = txIns;
     /** @type {TxOut[]} */
     this.txOuts = txOuts;
-    /** @type {Buffer} */
+    /** 4 bytes @type {Buffer} */
     this.locktime = locktime;
     /** @type {boolean} */
     this.testnet = testnet;
@@ -147,6 +138,12 @@ class Tx {
     const locktime = br.read(4);
 
     return new Tx(version, txIns, txOuts, locktime);
+  }
+
+  id() {
+    return Buffer.from(sha256(this.serialize()), "hex")
+      .reverse()
+      .toString("hex");
   }
 
   serialize() {
@@ -198,6 +195,7 @@ class Tx {
       Buffer.from(this.locktime).reverse(),
       SIGHASH_ALL // hardcoded
     ]);
+    // console.log(serialization);
     return new BN(sha256(serialization), "hex", "be");
   }
 
@@ -225,7 +223,7 @@ class Tx {
    */
   async verifyInput(inputIndex) {
     const input = this.txIns[inputIndex];
-    // TODO !!!!!!!!!!! await input.populateFromPrevOut(this.testnet);
+    await input.populateFromPrevOut(this.testnet);
     const z = await this.sigHash(inputIndex);
     const comb = Script.combine(input.scriptSig, input.scriptPubKey);
     return comb.evaluate(z);
@@ -238,7 +236,7 @@ class Tx {
   async signInput(inputIndex, privateKey) {
     const z = await this.sigHash(inputIndex);
     const der = privateKey.sign(z).der();
-    const sig = Buffer.concat([der, SIGHASH_ALL]);
+    const sig = Buffer.concat([der, SIGHASH_ALL_ONE]);
     const sec = privateKey.point.sec();
     const scriptSig = new Script([sig, sec]);
     this.txIns[inputIndex].scriptSig = scriptSig;

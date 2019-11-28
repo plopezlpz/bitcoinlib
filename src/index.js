@@ -17,13 +17,11 @@ const target = "mv4rnyY3Su5gjcDNzbMLKBQkBicCtHUtFB";
 
 // I have 0.03158023 BTC
 // Build the TX
-const txIn = new TxIn(
-  Buffer.from(
-    "966af3ef9be0e3907bd502b1be62cf07888105e1e0d1f5613835bd5455aab148",
-    "hex"
-  ),
-  new BN(0)
-);
+const prevTx =
+  "e0d3241855092e72aa419ee2d2d93b0c3a63bff8413c6ff0348b937560558d9a";
+const prevIndex = new BN(0);
+
+const txIn = new TxIn(Buffer.from(prevTx, "hex"), prevIndex);
 const changeH160 = decodeBase58Address(myAddressFrom);
 const changeScript = Script.p2pkhScript(changeH160);
 const changeOut = new TxOut(new BN("3050023"), changeScript);
@@ -36,7 +34,7 @@ const tx = new Tx(
   new BN(1),
   [txIn],
   [changeOut, targetOut],
-  Buffer.from([0]),
+  Buffer.from([0, 0, 0, 0]),
   true
 );
 tx.signInput(0, privKey)

@@ -39,7 +39,7 @@ class PrivateKey {
     let s = toOrderN(r.mul(this.secret).add(z)).redMul(kInv);
     // using low-s value will get nodes to relay our tx (this is for malleability reasons)
     // see BIP 62, "low S values in signatures"
-    if (s.lt(N.div(N2))) {
+    if (s.gt(N.div(N2))) {
       s = N.sub(s);
     }
     return new Signature(r, s);

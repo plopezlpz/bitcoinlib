@@ -79,7 +79,6 @@ class Signature {
       throw Error("Bad signature");
     }
     const length = br.read(1)[0];
-    // TODO !!!! the length is wrong but I think the signature works
     if (length + 2 !== der.byteLength) {
       throw Error("Bad signature length");
     }
