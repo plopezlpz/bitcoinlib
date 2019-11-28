@@ -38,5 +38,9 @@ const tx = new Tx(
   true
 );
 tx.signInput(0, privKey)
-  .then(res => console.log(res))
+  .then(res => {
+    if (res) {
+      console.log(tx.serialize().toString("hex"));
+    }
+  })
   .catch(err => console.log(err));

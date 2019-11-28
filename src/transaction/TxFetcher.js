@@ -1,6 +1,5 @@
 const axios = require("axios").default;
 const { Buffer } = require("buffer");
-const BN = require("bn.js");
 
 const cache = {};
 
