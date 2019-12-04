@@ -2,6 +2,62 @@ const Signature = require("../crypto/Signature");
 const { Point } = require("../crypto/Point");
 const { hash160 } = require("../utils/hash");
 
+function op0(stack) {
+  stack.push(0x00);
+  return true;
+}
+
+function op1(stack) {
+  stack.push(0x01);
+  return true;
+}
+
+function op2(stack) {
+  stack.push(0x02);
+  return true;
+}
+
+function opCheckMultisig(stack, z) {
+  if (stack.length < 1) {
+    return false;
+  }
+  const secPubKeys = [];
+  const derSignatures = [];
+  const n = parseInt(stack.pop(), 10);
+  if (stack.length < n + 1) {
+    return false;
+  }
+  for (let i = 0; i < n; i += 1) {
+    secPubKeys.push(stack.pop());
+  }
+  const m = parseInt(stack.pop(), 10);
+  for (let i = 0; i < m; i += 1) {
+    derSignatures.push(stack.pop().slice(0, -1));
+  }
+  stack.pop();
+  try {
+    const points = secPubKeys.map(Point.parse);
+    const sigs = derSignatures.map(Signature.parse);
+    for (let i = 0; i < sigs.length; i += 1) {
+      const sig = sigs[i];
+      if (points.length === 0) {
+        return false;
+      }
+      for (let j = 0; j < sigs.length; j += 1) {
+        if (points[j].verify(z, sig)) {
+          points.splice(j, 1);
+          break;
+        }
+      }
+    }
+    stack.push(0x01);
+  } catch (e) {
+    console.log("error: ", e);
+    return false;
+  }
+  return true;
+}
+
 // TODO these are the ops I need to do in order to evaluate
 function opDup(stack) {
   if (stack.length < 1) {
@@ -76,10 +132,10 @@ function opChecksig(stack, z) {
 }
 
 const OP_CODE_FUNCTIONS = {
-  // 0: op_0,
+  0: { op: op0, name: "OP_0" },
   // 79: op_1negate,
-  // 81: op_1,
-  // 82: op_2,
+  81: { op: op1, name: "OP_1" },
+  82: { op: op2, name: "OP_2" },
   // 83: op_3,
   // 84: op_4,
   // 85: op_5,
@@ -147,9 +203,9 @@ const OP_CODE_FUNCTIONS = {
   // 168: op_sha256,
   169: { op: opHash160, name: "OP_HASH160" },
   // 170: op_hash256,
-  172: { op: opChecksig, name: "OP_CHECKSIG" }
+  172: { op: opChecksig, name: "OP_CHECKSIG" },
   // 173: op_checksigverify,
-  // 174: op_checkmultisig,
+  174: { op: opCheckMultisig, name: "OP_CHECKMULTISIG" }
   // 175: op_checkmultisigverify,
   // 176: op_nop,
   // 177: op_checklocktimeverify,
