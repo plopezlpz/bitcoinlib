@@ -23,7 +23,7 @@
     "sinon": "^7.5.0"
   },
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "bn.js": "^5.0.0",
     "buffer": "^5.4.3",
     "hash.js": "^1.1.7",
